@@ -99,14 +99,6 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     });
 });
 
-// Middleware pour les routes non trouvées
-app.use('*', (req, res) => {
-    res.status(404).json({
-        error: 'Route non trouvée',
-        message: `La route ${req.method} ${req.originalUrl} n'existe pas`,
-    });
-});
-
 // Démarrage du serveur
 app.listen(PORT, () => {
     console.log(`🚀 API Gateway démarré sur le port ${PORT}`);

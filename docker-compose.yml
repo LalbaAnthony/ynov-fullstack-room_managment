@@ -21,8 +21,8 @@ services:
       - SERVICE_TEAM_URL=http://service-team:7002
     depends_on:
       - service-user
-      - service-room
-      - service-team
+      # - service-room
+      # - service-team
     restart: unless-stopped
 
   # ===================================================
