@@ -54,7 +54,7 @@ docker-compose down
 docker system prune -f
 
 # Build and run the Docker containers
-docker-compose up --build
+docker compose up --build
 ```
 
 ## 🧱 - Structure
@@ -77,8 +77,8 @@ For example, if you have `service-1` and `service-2`, they will be accessible at
 
 ## 📖 - Technos
 
-- **Frontend**: 
-  - `frontend/`: React, Next.js, Tailwind CSS
+- **Frontend**:
+  - `frontend/`: Next.js, Tailwind CSS, ShadCn
 - **Backend**:
   - `api-gateway/`: Node.js, Express, TypeScript
   - `service-*/`: Node.js, Express, TypeScript
