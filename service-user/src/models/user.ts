@@ -1,40 +1,58 @@
-import fs from "fs";
+import { DataTypes, Model, Optional } from 'sequelize';
+import bcrypt from 'bcryptjs';
+import sequelize from '../config/database';
+import { UserAttributes, UserCreationAttributes } from '../types';
 
-const dataDirectory = "data";
-
-const loadData = (filename: any) => {
-  const filePath = `${dataDirectory}/${filename}.json`;
-  try {
-    const data = fs.readFileSync(filePath, "utf8");
-    return JSON.parse(data);
-  } catch (err) {
-    console.error(`Impossible de lire le fichier ${filename}.json :`, err);
-  }
+interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes {
+    comparePassword(password: string): Promise<boolean>;
 }
 
-function saveData(filename: any, data: any) {
-  const filePath = `${dataDirectory}/${filename}.json`;
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
-  } catch (err) {
-    console.error(
-      `Impossible d'écrire dans le fichier ${filename}.json :`,
-      err
-    );
-  }
-}
-
-function validateData(data: any, requiredKeys: any) {
-  const keys = Object.keys(data);
-  if (keys.length !== requiredKeys.length) {
-    return false;
-  }
-  for (const key of requiredKeys) {
-    if (!data.hasOwnProperty(key)) {
-      return false;
+const User = sequelize.define<UserInstance>('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: true
+        }
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: [6, 255]
+        }
+    },
+    role: {
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user'
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
-  }
-  return true;
-}
+}, {
+    tableName: 'users',
+    timestamps: true,
+    hooks: {
+        beforeCreate: async (user: UserInstance) => {
+            user.password = await bcrypt.hash(user.password, 12);
+        },
+        beforeUpdate: async (user: UserInstance) => {
+            if (user.changed('password')) {
+                user.password = await bcrypt.hash(user.password, 12);
+            }
+        }
+    }
+});
 
-export { loadData, saveData, validateData };
+User.prototype.comparePassword = async function (password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+};
+
+export default User;

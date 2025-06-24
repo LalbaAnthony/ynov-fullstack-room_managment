@@ -1,31 +1,23 @@
-import morgan from 'morgan';
-import dotenv from 'dotenv';
-import express, { Express, Request, Response, NextFunction } from "express";
-import cors from "cors";
-import { generateRoutes } from './routes/serveRoutes';
+import app from './app';
+import sequelize from './config/database';
 
-dotenv.config();
+const PORT = process.env.PORT || 3000;
 
-const app: Express = express();
-const port = process.env.PORT;
+const startServer = async (): Promise<void> => {
+  try {
+    await sequelize.authenticate();
+    console.log('Database connection established');
 
-// Logging requests
-app.use(morgan('combined'));
+    await sequelize.sync({ force: false });
+    console.log('Database synchronized');
 
-// CORS
-app.use(cors());
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
-// generateRoutes(app);
-
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
-    res.send('/ of API of service-user');
-})
-
-app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-app.listen(port, () => {
-  console.log(`Service USER is running at http://localhost:${port}`);
-});
+startServer();
