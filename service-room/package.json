@@ -1,5 +1,5 @@
 {
-  "name": "user-service",
+  "name": "room-service",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -12,8 +12,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
-    "docker:build": "docker build -t service-user .",
-    "docker:run": "docker run -p 7000:7000 service-user"
+    "docker:build": "docker build -t service-room .",
+    "docker:run": "docker run -p 7000:7000 service-room"
   },
   "keywords": [],
   "author": "Anthony Lalba",

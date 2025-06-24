@@ -16,7 +16,7 @@
     "docker:run": "docker run -p 7000:7000 service-user"
   },
   "keywords": [],
-  "author": "Clément Fleury",
+  "author": "Anthony Lalba",
   "license": "MIT",
   "dependencies": {
     "concurrently": "^9.1.2",
