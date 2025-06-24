@@ -1,10 +1,10 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export const sequelize = new Sequelize(
-    // TODO: Chg env vars it fo fit docker conf
     process.env.POSTGRES_DB || '',
     process.env.POSTGRES_USER || '',
     process.env.POSTGRES_PASSWORD || '',
