@@ -19,7 +19,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api', routes);
+app.use(routes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -30,15 +30,10 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('/ of API of service-user');
 })
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
-});
-
 // Error handler
 app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
-console.error(err.stack);
-res.status(500).send('Something broke!');
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 export default app;

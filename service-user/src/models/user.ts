@@ -1,11 +1,9 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import bcrypt from 'bcryptjs';
-import sequelize from '../config/database';
+import { sequelize } from '../config/database';
 import { UserAttributes, UserCreationAttributes } from '../types';
 
-interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes {
-    comparePassword(password: string): Promise<boolean>;
-}
+interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes { }
 
 const User = sequelize.define<UserInstance>('User', {
     id: {
@@ -50,9 +48,5 @@ const User = sequelize.define<UserInstance>('User', {
         }
     }
 });
-
-User.prototype.comparePassword = async function (password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.password);
-};
 
 export default User;

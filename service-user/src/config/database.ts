@@ -3,14 +3,14 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const sequelize = new Sequelize(
+export const sequelize = new Sequelize(
     // TODO: Chg env vars it fo fit docker conf
-    process.env.DB_NAME || '',
-    process.env.DB_USER || '',
-    process.env.DB_PASSWORD || '',
+    process.env.POSTGRES_DB || '',
+    process.env.POSTGRES_USER || '',
+    process.env.POSTGRES_PASSWORD || '',
     {
-        host: process.env.DB_HOST || '',
-        port: parseInt(process.env.DB_PORT || '5432'),
+        host: process.env.POSTGRES_HOST || '',
+        port: parseInt(process.env.POSTGRES_PORT || '5432'),
         dialect: 'postgres',
         logging: process.env.NODE_ENV === 'development' ? console.log : false,
         pool: {
@@ -22,4 +22,3 @@ const sequelize = new Sequelize(
     }
 );
 
-export default sequelize;

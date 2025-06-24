@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User';
+import User from '../models/user';
+import bcrypt from 'bcryptjs';
 import { UserCreationAttributes, LoginRequest, JwtPayload } from '../types';
 
 export class AuthService {
@@ -41,7 +42,7 @@ export class AuthService {
             throw new Error('Invalid credentials');
         }
 
-        const isValidPassword = await user.comparePassword(loginData.password);
+        const isValidPassword = await bcrypt.compare(loginData.password, user.password);
         if (!isValidPassword) {
             throw new Error('Invalid credentials');
         }
@@ -81,7 +82,7 @@ export class AuthService {
             throw new Error('User not found');
         }
 
-        const isValidPassword = await user.comparePassword(currentPassword);
+        const isValidPassword = await bcrypt.compare(currentPassword, user.password);
         if (!isValidPassword) {
             throw new Error('Current password invalid');
         }

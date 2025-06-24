@@ -1,3 +1,4 @@
+import { Request } from 'express';
 export interface UserAttributes {
     id: number;
     email: string;
@@ -24,8 +25,6 @@ export interface JwtPayload {
 
 export interface AuthRequest extends Request {
     user?: JwtPayload;
-    query?: { [key: string]: string | undefined };
-    params?: { [key: string]: string | undefined };
 }
 
 export interface LoginRequest {
