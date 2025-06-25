@@ -3,7 +3,7 @@ export interface UserAttributes {
     id: number;
     firstname: string;
     lastname: string;
-    team_id: number;
+    team_id?: number;
     email: string;
     password: string;
     role: 'student' | 'admin';
@@ -15,7 +15,7 @@ export interface UserAttributes {
 export interface UserCreationAttributes {
     firstname: string;
     lastname: string;
-    team_id: number;
+    team_id?: number;
     email: string;
     password: string;
     role?: 'student' | 'admin';
@@ -41,7 +41,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
     firstname: string;
     lastname: string;
-    team_id: number;
+    team_id?: number;
     email: string;
     password: string;
     role?: 'student' | 'admin';

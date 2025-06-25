@@ -1,5 +1,5 @@
 import User from '../models/user';
-import { UpdateUserRequest } from '../types';
+import { UpdateUserRequest, UserCreationAttributes } from '../types';
 
 export class AdminService {
     static async getUsers(page: number = 1, limit: number = 10) {
@@ -44,7 +44,7 @@ export class AdminService {
         };
     }
 
-    static async createUser(userData: { email: string, firstname: string, lastname: string, role: string, team_id?: number }, currentUserId: number) {
+    static async createUser(userData: UserCreationAttributes, currentUserId: number) {
         if (userData.email === '') {
             throw new Error('Email is required');
         }
@@ -54,10 +54,7 @@ export class AdminService {
             throw new Error('Email already exists');
         }
 
-        const user = await User.create({
-            ...userData,
-            createdBy: currentUserId
-        });
+        const user = await User.create({ ...userData, password: 'defaultPassword123' });
 
         return {
             user: {
