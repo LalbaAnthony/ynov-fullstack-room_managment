@@ -74,6 +74,15 @@ Admin's endpoints:
 - `PUT` on http://localhost:4000/api/users/admin/users/:id to update a user by ID
 - `DELETE` on http://localhost:4000/api/users/admin/users/:id to delete a user by ID
 
+### Team service
+
+Teams's endpoints:
+
+- `GET` on http://localhost:4000/api/teams/teams/:id to get one team by ID
+- `GET` on http://localhost:4000/api/teams/teams to get all teams
+- `PUT` on http://localhost:4000/api/teams/teams/:id to update a team by ID
+- `DELETE` on http://localhost:4000/api/teams/teams/:id to delete a team by ID
+
 ## 🧱 - Structure
 
 Ports allocation:
