@@ -5,11 +5,32 @@ import { UserAttributes, UserCreationAttributes } from '../types';
 
 interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes { }
 
-const User = sequelize.define<UserInstance>('student', {
+const User = sequelize.define<UserInstance>('User', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    firstname: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: [2, 50]
+        }
+    },
+    lastname: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            len: [2, 50]
+        }
+    },
+    team_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        validate: {
+            isInt: true
+        }
     },
     email: {
         type: DataTypes.STRING,
