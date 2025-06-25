@@ -6,7 +6,7 @@ export class AdminService {
         const offset = (page - 1) * limit;
 
         const { count, rows } = await User.findAndCountAll({
-            attributes: ['id', 'email', 'role', 'isActive', 'createdAt'],
+            attributes: ['id', 'email', 'lastname', 'firstname', 'role', 'team_id', 'isActive', 'createdAt'],
             limit,
             offset,
             order: [['createdAt', 'DESC']]
@@ -34,6 +34,9 @@ export class AdminService {
             user: {
                 id: user.id,
                 email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                team_id: user.team_id,
                 role: user.role,
                 isActive: user.isActive
             }

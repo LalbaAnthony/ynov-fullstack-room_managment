@@ -5,14 +5,14 @@ import { AuthRequest, RegisterRequest, LoginRequest, ChangePasswordRequest } fro
 export class AuthController {
     static async register(req: Request, res: Response): Promise<void> {
         try {
-            const { email, password, role }: RegisterRequest = req.body;
+            const { email, password, role, lastname, firstname, team_id }: RegisterRequest = req.body;
 
-            if (!email || !password) {
-                res.status(400).json({ error: 'Email and password required' });
+            if (!email || !password || !firstname || !lastname) {
+                res.status(400).json({ error: 'Email, password, firstname, and lastname are required' });
                 return;
             }
 
-            const result = await AuthService.register({ email, password, role });
+            const result = await AuthService.register({ email, password, role, lastname, firstname, team_id });
             res.status(201).json(result);
         } catch (error: any) {
             res.status(error.message === 'User already exists' ? 409 : 500)

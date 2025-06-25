@@ -5,7 +5,7 @@ import { UserAttributes, UserCreationAttributes } from '../types';
 
 interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes { }
 
-const User = sequelize.define<UserInstance>('User', {
+const User = sequelize.define<UserInstance>('student', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -27,8 +27,8 @@ const User = sequelize.define<UserInstance>('User', {
         }
     },
     role: {
-        type: DataTypes.ENUM('user', 'admin'),
-        defaultValue: 'user'
+        type: DataTypes.ENUM('student', 'admin'),
+        defaultValue: 'student'
     },
     isActive: {
         type: DataTypes.BOOLEAN,

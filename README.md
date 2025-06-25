@@ -59,7 +59,7 @@ docker compose up --build
 
 ## ⚒️ - API
 
-### Endpoints
+### User service
 
 Users's endpoints:
 

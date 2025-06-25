@@ -58,6 +58,9 @@ export class AuthService {
             user: {
                 id: user.id,
                 email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                team_id: user.team_id,
                 role: user.role,
                 isActive: user.isActive
             }
@@ -66,7 +69,7 @@ export class AuthService {
 
     static async getUserProfile(userId: number) {
         const user = await User.findByPk(userId, {
-            attributes: ['id', 'email', 'role', 'isActive', 'createdAt']
+            attributes: ['id', 'email', 'firstname', 'lastname', 'role', 'team_id', 'isActive', 'createdAt']
         });
 
         if (!user || !user.isActive) {

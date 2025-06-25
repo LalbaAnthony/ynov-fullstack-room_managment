@@ -1,18 +1,24 @@
 import { Request } from 'express';
 export interface UserAttributes {
     id: number;
+    firstname: string;
+    lastname: string;
+    team_id: number;
     email: string;
     password: string;
-    role: 'user' | 'admin';
+    role: 'student' | 'admin';
     isActive: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
 export interface UserCreationAttributes {
+    firstname: string;
+    lastname: string;
+    team_id: number;
     email: string;
     password: string;
-    role?: 'user' | 'admin';
+    role?: 'student' | 'admin';
 }
 
 export interface JwtPayload {
@@ -33,9 +39,12 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
+    firstname: string;
+    lastname: string;
+    team_id: number;
     email: string;
     password: string;
-    role?: 'user' | 'admin';
+    role?: 'student' | 'admin';
 }
 
 export interface ChangePasswordRequest {
@@ -44,6 +53,6 @@ export interface ChangePasswordRequest {
 }
 
 export interface UpdateUserRequest {
-    role?: 'user' | 'admin';
+    role?: 'student' | 'admin';
     isActive?: boolean;
 }
