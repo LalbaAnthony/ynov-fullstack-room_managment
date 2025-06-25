@@ -19,8 +19,8 @@ services:
       - SERVICE_TEAM_URL=http://service-team:7002
     depends_on:
       - service-user
-      # - service-room
-      # - service-team
+      - service-room
+      - service-team
     restart: unless-stopped
 
   # ===================================================
@@ -94,6 +94,11 @@ services:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=7000
       - DATABASE_URL=postgresql://${POSTGRES_USER_USER:-user}:${POSTGRES_USER_PASSWORD:-password123}@postgres-users:5432/${POSTGRES_USER_DB:-users}
+      - POSTGRES_DB=${POSTGRES_USER_DB:-users}
+      - POSTGRES_USER=${POSTGRES_USER_USER:-user}
+      - POSTGRES_PASSWORD=${POSTGRES_USER_PASSWORD:-password123}
+      - POSTGRES_HOST=postgres-users
+      - POSTGRES_PORT=5432
     depends_on:
       postgres-users:
         condition: service_healthy
@@ -149,6 +154,11 @@ services:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=7001
       - DATABASE_URL=postgresql://${POSTGRES_ROOM_USER:-room}:${POSTGRES_ROOM_PASSWORD:-password123}@postgres-rooms:5432/${POSTGRES_ROOM_DB:-rooms}
+      - POSTGRES_DB=${POSTGRES_ROOM_DB:-rooms}
+      - POSTGRES_USER=${POSTGRES_ROOM_USER:-room}
+      - POSTGRES_PASSWORD=${POSTGRES_ROOM_PASSWORD:-password123}
+      - POSTGRES_HOST=postgres-rooms
+      - POSTGRES_PORT=5432
     depends_on:
       postgres-rooms:
         condition: service_healthy
@@ -204,6 +214,11 @@ services:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=7002
       - DATABASE_URL=postgresql://${POSTGRES_TEAM_USER:-team}:${POSTGRES_TEAM_PASSWORD:-password123}@postgres-teams:5432/${POSTGRES_TEAM_DB:-teams}
+      - POSTGRES_DB=${POSTGRES_TEAM_DB:-teams}
+      - POSTGRES_USER=${POSTGRES_TEAM_USER:-team}
+      - POSTGRES_PASSWORD=${POSTGRES_TEAM_PASSWORD:-password123}
+      - POSTGRES_HOST=postgres-teams
+      - POSTGRES_PORT=5432
     depends_on:
       postgres-teams:
         condition: service_healthy
