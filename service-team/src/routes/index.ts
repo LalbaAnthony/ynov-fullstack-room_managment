@@ -3,6 +3,6 @@ import teamRoutes from './teamRoutes';
 
 const router = Router();
 
-router.use('/team', teamRoutes);
+router.use(teamRoutes);
 
 export default router;

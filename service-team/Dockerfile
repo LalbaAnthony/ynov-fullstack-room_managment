@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-RUN addgroup -g 1001 -S nodejs && addteam -S nodejs -u 1001
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build || echo "No build script found"
 
 RUN chown -R nodejs:nodejs /app
-TEAM nodejs
+USER nodejs
 
 EXPOSE 7002
 

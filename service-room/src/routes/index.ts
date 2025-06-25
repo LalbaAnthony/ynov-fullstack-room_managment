@@ -3,6 +3,6 @@ import roomRoutes from './roomRoutes';
 
 const router = Router();
 
-router.use('/room', roomRoutes);
+router.use(roomRoutes);
 
 export default router;

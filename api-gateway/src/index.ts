@@ -101,12 +101,12 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Démarrage du serveur
 app.listen(PORT, () => {
-    console.log(`🚀 API Gateway démarré sur le port ${PORT}`);
-    console.log(`📍 Environnement: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔗 Services configurés:`);
-    console.log(`   - User Service: ${services.user}`);
-    console.log(`   - Room Service: ${services.room}`);
-    console.log(`   - Team Service: ${services.team}`);
+    console.log(`API Gateway démarré sur http://localhost:${PORT}`);
+    console.log(`Environnement: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Services configurés:`);
+    console.log(`- User Service: ${services.user}`);
+    console.log(`- Room Service: ${services.room}`);
+    console.log(`- Team Service: ${services.team}`);
 });
 
 // Gestion propre de l'arrêt

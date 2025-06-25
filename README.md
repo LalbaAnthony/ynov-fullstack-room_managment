@@ -59,6 +59,9 @@ docker compose up --build
 
 ## ⚒️ - API
 
+Usage: `<GATEWAY_URL>/api/<SERVICE>/<ENDPOINT>`
+Example: `http://localhost:4000/api/users/auth/register`
+
 ### User service
 
 Users's endpoints:
