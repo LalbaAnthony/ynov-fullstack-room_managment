@@ -7,7 +7,7 @@ export class AuthService {
     private static generateToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
         return jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'your-secret-key',
+            process.env.JWT_SECRET || '',
             { expiresIn: '24h' }
         );
     }

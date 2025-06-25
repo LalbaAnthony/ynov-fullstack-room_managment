@@ -70,9 +70,9 @@ Users's endpoints:
 
 Admin's endpoints:
 
-- `GET` on http://localhost:4000/api/users to get all users
-- `PUT` on http://localhost:4000/api/users/:id to update a user by ID
-- `DELETE` on http://localhost:4000/api/users/:id to delete a user by ID
+- `GET` on http://localhost:4000/api/users/admin/users to get all users
+- `PUT` on http://localhost:4000/api/users/admin/users/:id to update a user by ID
+- `DELETE` on http://localhost:4000/api/users/admin/users/:id to delete a user by ID
 
 ## 🧱 - Structure
 
