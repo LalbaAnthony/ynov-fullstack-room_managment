@@ -4,5 +4,6 @@ export type Student = {
   lastName: string;
   email: string;
   group: string;
+  groupId?: string;
   password?: string;
 };
