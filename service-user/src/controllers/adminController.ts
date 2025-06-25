@@ -28,6 +28,22 @@ export class AdminController {
         }
     }
 
+    static async getUser(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const userId = parseInt(req.params?.id || '0');
+            if (!userId) {
+                res.status(400).json({ error: 'User ID is required' });
+                return;
+            }
+
+            const result = await AdminService.getUser(userId);
+            res.json(result);
+        } catch (error: any) {
+            res.status(error.message === 'User not found' ? 404 : 500)
+                .json({ error: error.message });
+        }
+    }
+
     static async createUser(req: AuthRequest, res: Response): Promise<void> {
         try {
             const userData = req?.body;

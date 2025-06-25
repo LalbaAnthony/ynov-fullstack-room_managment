@@ -22,6 +22,28 @@ export class AdminService {
         };
     }
 
+    static async getUser(userId: number) {
+        const user = await User.findByPk(userId, {
+            attributes: ['id', 'email', 'lastname', 'firstname', 'role', 'team_id', 'isActive']
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return {
+            user: {
+                id: user.id,
+                email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                team_id: user.team_id,
+                role: user.role,
+                isActive: user.isActive
+            }
+        };
+    }
+
     static async createUser(userData: { email: string, firstname: string, lastname: string, role: string, team_id?: number }, currentUserId: number) {
         if (userData.email === '') {
             throw new Error('Email is required');
