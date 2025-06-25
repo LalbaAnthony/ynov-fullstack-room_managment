@@ -36,7 +36,7 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes de santé
+// Route de santé
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'OK',
