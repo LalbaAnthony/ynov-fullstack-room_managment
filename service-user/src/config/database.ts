@@ -4,7 +4,7 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-export const sequelize = new Sequelize(
+const sequelizeProduction = new Sequelize(
     process.env.POSTGRES_DB || '',
     process.env.POSTGRES_USER || '',
     process.env.POSTGRES_PASSWORD || '',
@@ -22,3 +22,10 @@ export const sequelize = new Sequelize(
     }
 );
 
+const sequelizeDevelopment = new Sequelize({
+    dialect: 'sqlite',
+    storage: './database.sqlite',
+    logging: console.log,
+});
+
+export const sequelize = process.env.NODE_ENV === 'production' ? sequelizeProduction : sequelizeDevelopment;
