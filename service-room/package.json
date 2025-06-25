@@ -13,7 +13,7 @@
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "docker:build": "docker build -t service-room .",
-    "docker:run": "docker run -p 7000:7000 service-room"
+    "docker:run": "docker run -p 7001:7001 service-room"
   },
   "keywords": [],
   "author": "Anthony Lalba",
@@ -28,7 +28,13 @@
     "morgan": "^1.10.0",
     "nodemon": "^3.1.10",
     "rimraf": "^6.0.1",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "express-rate-limit": "^7.5.0",
+    "bcryptjs": "^2.4.3",
+    "sequelize": "^6.32.1",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "helmet": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
@@ -42,7 +48,11 @@
     "globals": "^16.2.0",
     "prettier": "^3.5.3",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.1"
+    "typescript-eslint": "^8.34.1",
+    "@types/node": "^20.5.0",
+    "@types/bcryptjs": "^2.4.2",
+    "typescript": "^5.1.6",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1"
   }
 }

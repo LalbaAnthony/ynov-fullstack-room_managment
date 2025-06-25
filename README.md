@@ -83,6 +83,15 @@ Teams's endpoints:
 - `PUT` on http://localhost:4000/api/teams/teams/:id to update a team by ID
 - `DELETE` on http://localhost:4000/api/teams/teams/:id to delete a team by ID
 
+### Room service
+
+Rooms's endpoints:
+
+- `GET` on http://localhost:4000/api/rooms/rooms/:id to get one room by ID
+- `GET` on http://localhost:4000/api/rooms/rooms to get all rooms
+- `PUT` on http://localhost:4000/api/rooms/rooms/:id to update a room by ID
+- `DELETE` on http://localhost:4000/api/rooms/rooms/:id to delete a room by ID
+
 ## 🧱 - Structure
 
 Ports allocation:
