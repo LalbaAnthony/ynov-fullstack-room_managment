@@ -44,6 +44,16 @@ export class RoomController {
         }
     }
 
+    static async createRoom(req: Request, res: Response): Promise<void> {
+        try {
+            const roomData = req?.body;
+            const result = await RoomService.createRoom(roomData);
+            res.status(201).json(result);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     static async deleteRoom(req: Request, res: Response): Promise<void> {
         try {
             const roomId = parseInt(req.params?.id || '0');

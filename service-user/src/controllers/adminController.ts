@@ -28,6 +28,16 @@ export class AdminController {
         }
     }
 
+    static async createUser(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const userData = req?.body;
+            const result = await AdminService.createUser(userData, req.user!.id);
+            res.status(201).json(result);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     static async deleteUser(req: AuthRequest, res: Response): Promise<void> {
         try {
             const userId = parseInt(req.params?.id || '0');

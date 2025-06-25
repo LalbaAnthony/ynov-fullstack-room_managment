@@ -21,6 +21,17 @@ export class TeamService {
         };
     }
 
+    static async createTeam(teamData: { name: string }) {
+        const team = await Team.create(teamData);
+
+        return {
+            team: {
+                id: team.id,
+                name: team.name,
+            }
+        };
+    }
+
     static async getTeam(teamId: number) {
         const team = await Team.findByPk(teamId);
 

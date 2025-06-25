@@ -22,6 +22,34 @@ export class AdminService {
         };
     }
 
+    static async createUser(userData: { email: string, firstname: string, lastname: string, role: string, team_id?: number }, currentUserId: number) {
+        if (userData.email === '') {
+            throw new Error('Email is required');
+        }
+
+        const existingUser = await User.findOne({ where: { email: userData.email } });
+        if (existingUser) {
+            throw new Error('Email already exists');
+        }
+
+        const user = await User.create({
+            ...userData,
+            createdBy: currentUserId
+        });
+
+        return {
+            user: {
+                id: user.id,
+                email: user.email,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                team_id: user.team_id,
+                role: user.role,
+                isActive: user.isActive
+            }
+        };
+    }
+
     static async updateUser(userId: number, updateData: UpdateUserRequest) {
         const user = await User.findByPk(userId);
         if (!user) {

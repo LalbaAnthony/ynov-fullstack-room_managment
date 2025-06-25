@@ -21,6 +21,21 @@ export class RoomService {
         };
     }
 
+    static async createRoom(roomData: { name: string }) {
+        if (!roomData.name) {
+            throw new Error('Room name is required');
+        }
+
+        const room = await Room.create(roomData);
+
+        return {
+            room: {
+                id: room.id,
+                name: room.name,
+            }
+        };
+    }
+
     static async getRoom(roomId: number) {
         const room = await Room.findByPk(roomId);
 

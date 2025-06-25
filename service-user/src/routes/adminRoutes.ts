@@ -4,6 +4,7 @@ import { verifyToken, requireAdmin } from '../middleware/auth';
 
 const router = Router();
 
+router.post('/users', verifyToken, requireAdmin, AdminController.createUser);
 router.get('/users', verifyToken, requireAdmin, AdminController.getUsers);
 router.put('/users/:id', verifyToken, requireAdmin, AdminController.updateUser);
 router.delete('/users/:id', verifyToken, requireAdmin, AdminController.deleteUser);
