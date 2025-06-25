@@ -3,12 +3,9 @@ import { RoomService } from '../services/roomService';
 import { UpdateRoomRequest } from '../types';
 
 export class RoomController {
-    static async getRooms(req: Request, res: Response): Promise<void> {
+    static async getRooms(res: Response): Promise<void> {
         try {
-            const page = parseInt(req.query?.page as string) || 1;
-            const limit = parseInt((req.query?.limit as string) ?? '10') || 10;
-
-            const result = await RoomService.getRooms(page, limit);
+            const result = await RoomService.getRooms();
             res.json(result);
         } catch (error: any) {
             res.status(500).json({ error: error.message });
@@ -17,7 +14,7 @@ export class RoomController {
 
     static async getRoom(req: Request, res: Response): Promise<void> {
         try {
-            const roomId = parseInt(req.params?.id || '0');
+            const roomId = parseInt(req.params?.id);
             if (!roomId) {
                 res.status(400).json({ error: 'Room ID is required' });
                 return;
@@ -28,6 +25,21 @@ export class RoomController {
         } catch (error: any) {
             res.status(error.message === 'Room not found' ? 404 : 500)
                 .json({ error: error.message });
+        }
+    }
+
+    static async createRoom(req: Request, res: Response): Promise<void> {
+        try {
+            const roomData = req.body;
+            if (!roomData || !roomData.name) {
+                res.status(400).json({ error: 'Room name is required' });
+                return;
+            }
+
+            const result = await RoomService.createRoom(roomData);
+            res.status(201).json(result);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
         }
     }
 
