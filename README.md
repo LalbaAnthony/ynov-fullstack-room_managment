@@ -57,6 +57,15 @@ docker system prune -f
 docker compose up --build
 ```
 
+### Seeding data
+
+To seed the database with initial data, run the following command:
+
+```bash
+cd service-user
+npm run seed
+```
+
 ## ⚒️ - API
 
 Usage: `<GATEWAY_URL>/api/<SERVICE>/<ENDPOINT>`
