@@ -1,5 +1,5 @@
-import { DataTypes, Model, Optional } from 'sequelize';
 import bcrypt from 'bcryptjs';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 import { UserAttributes, UserCreationAttributes } from '../types';
 
@@ -51,7 +51,7 @@ const User = sequelize.define<UserInstance>('User', {
         type: DataTypes.ENUM('student', 'admin'),
         defaultValue: 'student'
     },
-    isActive: {
+    isFirstConnection: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     }

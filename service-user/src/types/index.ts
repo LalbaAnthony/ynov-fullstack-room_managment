@@ -7,7 +7,7 @@ export interface UserAttributes {
     email: string;
     password: string;
     role: 'student' | 'admin';
-    isActive: boolean;
+    isFirstConnection: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -30,6 +30,7 @@ export interface JwtPayload {
 }
 
 export interface AuthRequest extends Request {
+    body: any;
     user?: JwtPayload;
 }
 
@@ -53,6 +54,7 @@ export interface ChangePasswordRequest {
 }
 
 export interface UpdateUserRequest {
+    email?: string;
     role?: 'student' | 'admin';
-    isActive?: boolean;
+    isFirstConnection?: boolean;
 }

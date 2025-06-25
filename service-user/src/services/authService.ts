@@ -1,7 +1,7 @@
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
-import bcrypt from 'bcryptjs';
-import { UserCreationAttributes, LoginRequest, JwtPayload } from '../types';
+import { JwtPayload, LoginRequest, UserCreationAttributes } from '../types';
 
 export class AuthService {
     private static generateToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
@@ -31,14 +31,14 @@ export class AuthService {
                 id: user.id,
                 email: user.email,
                 role: user.role,
-                isActive: user.isActive
+                isFirstConnection: user.isFirstConnection
             }
         };
     }
 
     static async login(loginData: LoginRequest) {
         const user = await User.findOne({ where: { email: loginData.email } });
-        if (!user || !user.isActive) {
+        if (!user || !user.isFirstConnection) {
             throw new Error('Invalid credentials');
         }
 
@@ -62,17 +62,17 @@ export class AuthService {
                 lastname: user.lastname,
                 team_id: user.team_id,
                 role: user.role,
-                isActive: user.isActive
+                isFirstConnection: user.isFirstConnection
             }
         };
     }
 
     static async getUserProfile(userId: number) {
         const user = await User.findByPk(userId, {
-            attributes: ['id', 'email', 'firstname', 'lastname', 'role', 'team_id', 'isActive', 'createdAt']
+            attributes: ['id', 'email', 'firstname', 'lastname', 'role', 'team_id', 'isFirstConnection', 'createdAt']
         });
 
-        if (!user || !user.isActive) {
+        if (!user || !user.isFirstConnection) {
             throw new Error('User not found');
         }
 

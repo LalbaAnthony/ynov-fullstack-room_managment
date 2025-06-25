@@ -15,6 +15,33 @@ export class AdminController {
         }
     }
 
+    static async getStudents(res: Response): Promise<void> {
+        try {
+            // const result = await AdminService.getStudents();
+            const test = "hey";
+            res.json(test);
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    static async createStudent(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const newUserData = req.body;
+
+            if (!newUserData.email || !newUserData.password || !newUserData.firstname || !newUserData.lastname) {
+                res.status(400).json({ error: 'Email, password, firstname, and lastname are required' });
+                return;
+            }
+
+            const result = await AdminService.createStudent(newUserData);
+            res.status(201).json(result);
+        } catch (error: any) {
+            res.status(error.message === 'User already exists' ? 409 : 500)
+                .json({ error: error.message });
+        }
+    }
+
     static async updateUser(req: AuthRequest, res: Response): Promise<void> {
         try {
             const userId = parseInt(req.params?.id || '0');
