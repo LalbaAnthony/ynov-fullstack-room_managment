@@ -61,9 +61,9 @@ const proxyOptions = (target: string): Options => ({
   },
 });
 
-app.use("/api/users", createProxyMiddleware({
+app.use("/api/user", createProxyMiddleware({
   ...proxyOptions(SERVICE_USER_URL),
-  pathRewrite: { '^/api/users': '/' },
+  pathRewrite: { '^/api/user': '/' },
 }));
 
 app.use("/api/rooms", createProxyMiddleware({

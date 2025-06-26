@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API Globale du Projet",
+    "title": "Room Managment | API",
     "version": "1.0.0",
-    "description": "Documentation centralisée pour tous les microservices, accessible via l'API Gateway."
+    "description": "Documentation centralisée pour tous les microservices, accessible via l'API Gateway. Cette documentation inclut les opérations complètes pour le service User."
   },
   "servers": [
     {
@@ -12,6 +12,107 @@
     }
   ],
   "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "L'identifiant unique de l'utilisateur.",
+            "example": "clxqz5k4p0000abcde1234567"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["user", "admin"],
+            "default": "user"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserInput": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Jane"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Doit être unique.",
+            "example": "jane.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Le mot de passe en clair. Il sera hashé par le serveur.",
+            "example": "strongpassword123"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["user", "admin"],
+            "description": "Optionnel. La valeur par défaut est 'user'.",
+            "example": "user"
+          }
+        }
+      },
+      "UserUpdate": {
+        "type": "object",
+        "description": "Champs à mettre à jour pour un utilisateur. Tous les champs sont optionnels.",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Jane"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Smith"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Doit être unique.",
+            "example": "jane.smith@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "Nouveau mot de passe en clair, si un changement est nécessaire.",
+            "example": "newstrongpassword456"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["user", "admin"],
+            "example": "admin"
+          }
+        }
+      }
+    },
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
@@ -28,7 +129,7 @@
     },
     {
       "name": "Users (User Service)",
-      "description": "Opérations sur les utilisateurs."
+      "description": "Opérations sur les utilisateurs (CRUD)."
     },
     {
       "name": "Rooms (Room Service)",
@@ -40,7 +141,7 @@
     }
   ],
   "paths": {
-    "/api/users/auth": {
+    "/api/user/auth": {
       "post": {
         "tags": ["Authentication (User Service)"],
         "summary": "Connecte un utilisateur et retourne un token JWT",
@@ -75,14 +176,161 @@
         }
       }
     },
-    "/api/users/": {
+    "/api/user": {
       "get": {
         "tags": ["Users (User Service)"],
         "summary": "Récupère la liste de tous les utilisateurs",
+        "description": "Retourne un tableau de tous les utilisateurs. Accessible seulement par les utilisateurs avec le rôle 'admin'.",
         "security": [{ "bearerAuth": [] }],
         "responses": {
-          "200": { "description": "Liste des utilisateurs." },
-          "401": { "description": "Token manquant ou invalide" }
+          "200": {
+            "description": "Liste des utilisateurs récupérée avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Token manquant ou invalide." },
+          "403": { "description": "Accès refusé. Rôle admin requis." }
+        }
+      },
+      "post": {
+        "tags": ["Users (User Service)"],
+        "summary": "Ajoute un nouvel utilisateur",
+        "description": "Crée un nouvel utilisateur. Accessible seulement par les utilisateurs avec le rôle 'admin'.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "description": "Données du nouvel utilisateur à créer.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Données invalides (ex: email déjà utilisé, champs manquants)."
+          },
+          "401": { "description": "Token manquant ou invalide." },
+          "403": { "description": "Accès refusé. Rôle admin requis." }
+        }
+      }
+    },
+    "/api/user/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "L'identifiant de l'utilisateur.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": ["Users (User Service)"],
+        "summary": "Récupère un utilisateur par son ID",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Utilisateur trouvé.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": { "description": "Token manquant ou invalide." },
+          "404": { "description": "Utilisateur non trouvé." }
+        }
+      },
+      "put": {
+        "tags": ["Users (User Service)"],
+        "summary": "Met à jour un utilisateur existant",
+        "description": "Met à jour les informations d'un utilisateur par son ID. Accessible seulement par les utilisateurs avec le rôle 'admin'.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "description": "Les champs de l'utilisateur à mettre à jour.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Utilisateur mis à jour avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "user": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Données invalides (ex: email déjà utilisé)."
+          },
+          "401": { "description": "Token manquant ou invalide." },
+          "403": { "description": "Accès refusé. Rôle admin requis." },
+          "404": { "description": "Utilisateur non trouvé." }
+        }
+      },
+      "delete": {
+        "tags": ["Users (User Service)"],
+        "summary": "Supprime un utilisateur",
+        "description": "Supprime un utilisateur par son ID. Accessible seulement par les utilisateurs avec le rôle 'admin'.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Utilisateur supprimé avec succès.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Token manquant ou invalide." },
+          "403": { "description": "Accès refusé. Rôle admin requis." },
+          "404": { "description": "Utilisateur non trouvé." }
         }
       }
     },

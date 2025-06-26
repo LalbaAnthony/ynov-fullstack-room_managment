@@ -16,6 +16,25 @@ export const getAllUsers = async (): Promise<Partial<UserAttributes>[]> => {
 };
 
 /**
+ * Get User by ID
+ *
+ * @param {string} userId - The ID of the user to get.
+ * @returns {Promise<Partial<UserAttributes>>}
+ * @throws {Error}
+ */
+export const getUser = async (userId: string): Promise<Partial<UserAttributes>> => {
+  const user = await User.findByPk(userId, {
+    attributes: { exclude: ['passwordHash'] },
+  });
+
+  if (!user) {
+    throw new Error('User not found.');
+  }
+
+  return user;
+};
+
+/**
  * Creates a new user.
  * Hashes the password before storing it.
  *

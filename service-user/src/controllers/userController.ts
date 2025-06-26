@@ -15,6 +15,32 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 };
 
 /**
+ * Get User by ID
+ *
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @param {NextFunction} next - The Express next middleware function.
+ */
+export const getUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await userService.getUser(userId);
+    res.status(200).json(user);
+  } catch (error: any) {
+    console.error('Error updating user:', error);
+
+    let statusCode = 500;
+    if (error.message.includes('User not found')) {
+      statusCode = 404;
+    } else if (error.message.includes('Email already in use')) {
+      statusCode = 400;
+    }
+    res.status(statusCode).json({ message: error.message || 'Error updating user.' });
+  }
+};
+
+/**
  * Adds a new user.
  * Accessible only by 'admin' role.
  *

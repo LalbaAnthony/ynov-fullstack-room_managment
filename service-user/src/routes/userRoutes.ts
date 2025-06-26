@@ -10,6 +10,12 @@ router.get(
   userController.getAllUsers
 );
 
+router.get(
+  "/:id",
+  authenticateToken,
+  userController.getUser
+)
+
 router.post(
   "/",
   authenticateToken,
