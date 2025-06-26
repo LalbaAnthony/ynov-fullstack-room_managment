@@ -80,7 +80,7 @@ services:
       retries: 3
 
   pgadmin-users:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4
     networks:
       - microservices-network
     ports:

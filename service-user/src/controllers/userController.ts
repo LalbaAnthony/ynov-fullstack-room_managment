@@ -10,13 +10,8 @@ import * as userService from '../services/userService';
  * @param {NextFunction} next - The Express next middleware function.
  */
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await userService.getAllUsers();
-    res.status(200).json(users);
-  } catch (error: any) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ message: 'Error fetching users.', error: error.message });
-  }
+  const users = await userService.getAllUsers();
+  res.status(200).json(users);
 };
 
 /**

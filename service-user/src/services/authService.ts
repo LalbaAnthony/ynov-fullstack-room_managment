@@ -49,12 +49,12 @@ export const registerUser = async (userData: UserCreationAttributes): Promise<Pa
 export const loginUser = async (email: string, passwordPlain: string): Promise<{ token: string; user: Partial<UserAttributes> }> => {
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    throw new Error('Invalid credentials.');
+    throw new Error('Invalid credentials. User does not exist');
   }
 
   const isMatch = await bcrypt.compare(passwordPlain, user.passwordHash);
   if (!isMatch) {
-    throw new Error('Invalid credentials.');
+    throw new Error('Invalid credentials. Not match');
   }
 
   const payload: JwtPayload = { userId: user.id, role: user.role };

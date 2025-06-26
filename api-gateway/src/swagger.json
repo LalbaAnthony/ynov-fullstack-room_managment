@@ -40,7 +40,7 @@
     }
   ],
   "paths": {
-    "/api/users/auth/login": {
+    "/api/users/auth": {
       "post": {
         "tags": ["Authentication (User Service)"],
         "summary": "Connecte un utilisateur et retourne un token JWT",

@@ -17,7 +17,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRoutes);
-
 app.use("/", userRoutes);
 
 app.get("/health", async (_req, res) => {
