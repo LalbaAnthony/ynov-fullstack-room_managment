@@ -46,6 +46,17 @@ npm i
 next dev
 ```
 
+### In dev, using Docker
+
+```bash
+# Can be used to clean up any previous Docker containers and images
+docker-compose down
+docker system prune -f
+
+# Build and run the Docker containers
+docker compose up --build
+```
+
 ### In production, using Docker
 
 ```bash
