@@ -37,6 +37,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
+    console.log('Login attempt with email:', email);
 
     if (!email || !password) {
       res.status(400).json({ message: 'Email and password are required.' });
@@ -44,6 +45,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     const { token, user } = await authService.loginUser(email, password);
+
+    console.log('Login successful for user:', user.email);
 
     res.status(200).json({ message: 'Login successful.', token, user });
   } catch (error: any) {
