@@ -1,23 +1,38 @@
+import { Optional } from "sequelize";
+
 export interface UserAttributes {
   id: string;
-  username: string;
+  firstName: string | null;
+  lastName: string | null;
   email: string;
   passwordHash: string;
-  role: 'user' | 'admin';
+  role: "student" | "admin";
   isFirstConnection: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-import { Optional } from 'sequelize';
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'role' | 'isFirstConnection'> {}
+export interface UserCreationAttributes
+  extends Optional<
+    UserAttributes,
+    | "id"
+    | "role"
+    | "isFirstConnection"
+    | "createdAt"
+    | "updatedAt"
+    | "firstName"
+    | "lastName"
+  > {}
 
 export interface JwtPayload {
   userId: string;
-  role: 'user' | 'admin';
+  role: "student" | "admin";
 }
 
-import { Request } from 'express';
-export interface AuthRequest extends Request {
-  user?: JwtPayload;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
 }

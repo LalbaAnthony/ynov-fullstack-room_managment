@@ -1,35 +1,69 @@
-import { NextFunction, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { AuthRequest, JwtPayload } from '../types';
+import { NextFunction, Request, Response } from 'express';
+import jwt, { JsonWebTokenError, Secret, TokenExpiredError } from 'jsonwebtoken';
+import { JwtPayload } from '../types';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
+const JWT_SECRET: Secret = process.env.JWT_SECRET ?? 'supersecretkey';
 
-export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+/**
+ * Middleware to authenticate requests using JWT.
+ * Verifies the token and attaches user ID and role to the request object.
+ *
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @param {NextFunction} next - The Express next middleware function.
+ */
+// Pour être plus explicite, on peut ajouter le type de retour : void
+export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
-    res.status(401).json({ message: 'Access Denied: No token provided.' });
-    return;
+  if (token == null) {
+    // On enlève le "return" ici
+    res.status(401).json({ message: 'Authentication token required.' });
+    return; // On peut mettre un return vide pour stopper l'exécution de la fonction
   }
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    req.user = decoded;
-    next();
-  } catch (error) {
-    console.error('Invalid token:', error);
-    res.status(403).json({ message: 'Access Denied: Invalid token.' });
-    return;
-  }
-};
-
-export const authorizeRoles = (...roles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user || !roles.includes(req.user.role)) {
-      res.status(403).json({ message: 'Forbidden: You do not have the required role.' });
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) {
+      if (err instanceof TokenExpiredError) {
+        // On enlève le "return" ici
+        res.status(403).json({ message: 'Token expired.' });
+        return;
+      }
+      if (err instanceof JsonWebTokenError) {
+        // On enlève le "return" ici
+        res.status(403).json({ message: 'Invalid token.' });
+        return;
+      }
+      // On enlève le "return" ici
+      res.status(403).json({ message: 'Forbidden.' });
       return;
     }
+
+    req.user = decoded as JwtPayload;
+    next();
+  });
+};
+
+/**
+ * Middleware to authorize requests based on user role.
+ * Ensures that the authenticated user has one of the allowed roles.
+ *
+ * @param {('student' | 'admin')[]} allowedRoles - An array of roles that are allowed to access the route.
+ * @returns {Function} An Express middleware function.
+ */
+export const authorizeRoles = (allowedRoles: ('student' | 'admin')[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user || !req.user.role) {
+      res.status(403).json({ message: 'Access denied. User role not found.' });
+      return;
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+      return;
+    }
+
     next();
   };
 };

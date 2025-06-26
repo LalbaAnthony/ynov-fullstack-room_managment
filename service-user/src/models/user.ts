@@ -4,10 +4,11 @@ import { UserAttributes, UserCreationAttributes } from '../types';
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: string;
-  public username!: string;
+  public firstName!: string;
+  public lastName!: string;
   public email!: string;
   public passwordHash!: string;
-  public role!: 'user' | 'admin';
+  public role!: 'student' | 'admin';
   public isFirstConnection!: boolean;
 
   public readonly createdAt!: Date;
@@ -22,10 +23,15 @@ User.init(
       primaryKey: true,
       allowNull: false,
     },
-    username: {
+    firstName: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: true,
+      unique: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: false,
     },
     email: {
       type: DataTypes.STRING,
@@ -40,8 +46,8 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      defaultValue: 'user',
+      type: DataTypes.ENUM('student', 'admin'),
+      defaultValue: 'student',
       allowNull: false,
     },
     isFirstConnection: {
