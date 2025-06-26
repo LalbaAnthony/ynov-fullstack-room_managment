@@ -1,64 +1,35 @@
 import Team from '../models/team';
-import { UpdateTeamRequest } from '../types';
+import { TeamAttributes, TeamCreationAttributes } from '../types';
 
-export class TeamService {
-    static async getTeams(page: number = 1, limit: number = 10) {
-        const offset = (page - 1) * limit;
+export const createTeam = async (teamData: TeamCreationAttributes) => {
+  const team = await Team.create(teamData);
+  return team;
+};
 
-        const { count, rows } = await Team.findAndCountAll({
-            limit,
-            offset,
-            order: [['createdAt', 'DESC']]
-        });
+export const getAllTeams = async () => {
+  const teams = await Team.findAll();
+  return teams;
+};
 
-        return {
-            teams: rows,
-            pagination: {
-                total: count,
-                page,
-                pages: Math.ceil(count / limit)
-            }
-        };
-    }
+export const getTeamById = async (id: string) => {
+  const team = await Team.findByPk(id);
+  return team;
+};
 
-    static async getTeam(teamId: number) {
-        const team = await Team.findByPk(teamId);
+export const updateTeam = async (id: string, teamData: Partial<TeamAttributes>) => {
+  const team = await Team.findByPk(id);
+  if (!team) {
+    throw new Error('Team not found.');
+  }
+  await team.update(teamData);
+  return team;
+};
 
-        if (!team) {
-            throw new Error('Team not found');
-        }
-
-        return {
-            team: {
-                id: team.id,
-                name: team.name,
-            }
-        };
-    }
-
-    static async updateTeam(teamId: number, updateData: UpdateTeamRequest) {
-        const team = await Team.findByPk(teamId);
-        if (!team) {
-            throw new Error('Team not found');
-        }
-
-        await team.update(updateData);
-
-        return {
-            team: {
-                id: team.id,
-                name: team.name,
-            }
-        };
-    }
-
-    static async deleteTeam(teamId: number) {
-        const deleted = await Team.destroy({ where: { id: teamId } });
-
-        if (!deleted) {
-            throw new Error('Team not found');
-        }
-
-        return { message: 'Team deleted' };
-    }
-}
+export const deleteTeam = async (id: string) => {
+  const team = await Team.findByPk(id);
+  if (!team) {
+    throw new Error('Team not found.');
+  }
+  await team.destroy();
+  return { message: 'Team deleted successfully.' };
+};

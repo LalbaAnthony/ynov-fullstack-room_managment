@@ -1,58 +1,57 @@
-import { Request, Response } from 'express';
-import { TeamService } from '../services/teamService';
-import { UpdateTeamRequest } from '../types';
+// service-team/src/controllers/teamController.ts
+import { NextFunction, Request, Response } from 'express';
+import * as teamService from '../services/teamService';
 
-export class TeamController {
-    static async getTeams(req: Request, res: Response): Promise<void> {
-        try {
-            const page = parseInt(req.query?.page as string) || 1;
-            const limit = parseInt((req.query?.limit as string) ?? '10') || 10;
+export const createTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const newTeam = await teamService.createTeam(req.body);
+    res.status(201).json(newTeam);
+  } catch (error: any) {
+    console.error('Error creating team:', error);
+    res.status(400).json({ message: error.message || 'Error creating team.' });
+  }
+};
 
-            const result = await TeamService.getTeams(page, limit);
-            res.json(result);
-        } catch (error: any) {
-            res.status(500).json({ error: error.message });
-        }
+export const getTeams = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const teams = await teamService.getAllTeams();
+    res.status(200).json(teams);
+  } catch (error: any) {
+    console.error('Error fetching teams:', error);
+    res.status(500).json({ message: error.message || 'Error fetching teams.' });
+  }
+};
+
+export const getTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const team = await teamService.getTeamById(req.params.id);
+    if (!team) {
+      res.status(404).json({ message: 'Team not found.' });
+      return;
     }
+    res.status(200).json(team);
+  } catch (error: any) {
+    console.error('Error fetching team:', error);
+    res.status(500).json({ message: error.message || 'Error fetching team.' });
+  }
+};
 
-    static async getTeam(req: Request, res: Response): Promise<void> {
-        try {
-            const teamId = parseInt(req.params?.id || '0');
-            if (!teamId) {
-                res.status(400).json({ error: 'Team ID is required' });
-                return;
-            }
+export const updateTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updatedTeam = await teamService.updateTeam(req.params.id, req.body);
+    res.status(200).json(updatedTeam);
+  } catch (error: any) {
+    console.error('Error updating team:', error);
+    res.status(400).json({ message: error.message || 'Error updating team.' });
+  }
+};
 
-            const result = await TeamService.getTeam(teamId);
-            res.json(result);
-        } catch (error: any) {
-            res.status(error.message === 'Team not found' ? 404 : 500)
-                .json({ error: error.message });
-        }
-    }
-
-    static async updateTeam(req: Request, res: Response): Promise<void> {
-        try {
-            const teamId = parseInt(req.params?.id || '0');
-            const updateData: UpdateTeamRequest = req?.body
-
-            const result = await TeamService.updateTeam(teamId, updateData);
-            res.json(result);
-        } catch (error: any) {
-            res.status(error.message === 'Team not found' ? 404 : 500)
-                .json({ error: error.message });
-        }
-    }
-
-    static async deleteTeam(req: Request, res: Response): Promise<void> {
-        try {
-            const teamId = parseInt(req.params?.id || '0');
-            const result = await TeamService.deleteTeam(teamId);
-            res.json(result);
-        } catch (error: any) {
-            const status = error.message === 'Team not found' ? 404 :
-                error.message === 'Cannot delete own account' ? 400 : 500;
-            res.status(status).json({ error: error.message });
-        }
-    }
-}
+export const deleteTeam = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await teamService.deleteTeam(req.params.id);
+    res.status(200).json(result);
+  } catch (error: any) {
+    console.error('Error deleting team:', error);
+    res.status(400).json({ message: error.message || 'Error deleting team.' });
+  }
+};

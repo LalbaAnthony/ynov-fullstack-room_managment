@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { AuthController } from '../controllers/authController';
-import { verifyToken } from '../middleware/auth';
-import { authLimiter } from '../middleware/rateLimiter';
+import * as authController from '../controllers/authController';
 
 const router = Router();
 
-router.post('/register', authLimiter, AuthController.register);
-router.post('/login', authLimiter, AuthController.login);
-router.get('/me', verifyToken, AuthController.getProfile);
-router.put('/password', verifyToken, AuthController.changePassword);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+
+router.get('/public-test', (req, res) => {
+  res.status(200).json({ message: 'This is a public test route.' });
+});
 
 export default router;

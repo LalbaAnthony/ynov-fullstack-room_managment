@@ -1,11 +1,13 @@
+// service-team/src/routes/teamRoutes.ts
 import { Router } from 'express';
-import { TeamController } from '../controllers/teamController';
+import * as teamController from '../controllers/teamController';
 
 const router = Router();
 
-router.get('/teams/:id', TeamController.getTeams);
-router.get('/teams', TeamController.getTeams);
-router.put('/teams/:id', TeamController.updateTeam);
-router.delete('/teams/:id', TeamController.deleteTeam);
+router.post('/', teamController.createTeam);
+router.get('/', teamController.getTeams);
+router.get('/:id', teamController.getTeam);
+router.put('/:id', teamController.updateTeam);
+router.delete('/:id', teamController.deleteTeam);
 
 export default router;
