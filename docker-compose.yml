@@ -5,6 +5,7 @@ services:
   api-gateway:
     build:
       context: ./api-gateway
+      dockerfile: Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -12,7 +13,7 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=4000
       - SERVICE_USER_URL=http://service-user:7000
       - SERVICE_ROOM_URL=http://service-room:7001
@@ -21,15 +22,24 @@ services:
       - service-user
       - service-room
       - service-team
+    volumes:
+      - ./api-gateway/src:/app/src
+      - ./api-gateway/package.json:/app/package.json
+      - ./api-gateway/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
     restart: unless-stopped
 
   # ===================================================
   # FRONTEND
   # ===================================================
   # ! DISABLED FOR NOW CUZ HOW DA HELL DOES THIS SHIT TAKE SOOO LONG
+  # Si tu veux le réactiver, suis le même principe :
+  # - Créer un Dockerfile.dev pour le frontend
+  # - Ajouter des volumes pour le live reload
   # frontend:
   #   build:
   #     context: ./frontend
+  #     dockerfile: Dockerfile.dev
   #   networks:
   #     - microservices-network
   #   ports:
@@ -37,9 +47,12 @@ services:
   #   env_file:
   #     - .env
   #   environment:
-  #     - NODE_ENV=${NODE_ENV:-production}
+  #     - NODE_ENV=${NODE_ENV:-development}
   #     - PORT=3000
   #     - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:4000}
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
   #   depends_on:
   #     - api-gateway
   #   restart: unless-stopped
@@ -84,6 +97,7 @@ services:
   service-user:
     build:
       context: ./service-user
+      dockerfile: Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -91,14 +105,19 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=7000
-      - DATABASE_URL=postgresql://${POSTGRES_USER_USER:-user}:${POSTGRES_USER_PASSWORD:-password123}@postgres-users:5432/${POSTGRES_USER_DB:-users}
+      - DATABASE_URL=postgresql://${POSTGRES_USER_USER:-user}:${POSTGRES_USER_PASSWORD:-password123}@postgres-users:5432/${POSTGRES_USER_DB:-users}?sslmode=disable
       - POSTGRES_DB=${POSTGRES_USER_DB:-users}
       - POSTGRES_USER=${POSTGRES_USER_USER:-user}
       - POSTGRES_PASSWORD=${POSTGRES_USER_PASSWORD:-password123}
       - POSTGRES_HOST=postgres-users
       - POSTGRES_PORT=5432
+    volumes:
+      - ./service-user/src:/app/src
+      - ./service-user/package.json:/app/package.json
+      - ./service-user/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
     depends_on:
       postgres-users:
         condition: service_healthy
@@ -144,6 +163,7 @@ services:
   service-room:
     build:
       context: ./service-room
+      dockerfile: Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -151,14 +171,19 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=7001
-      - DATABASE_URL=postgresql://${POSTGRES_ROOM_USER:-room}:${POSTGRES_ROOM_PASSWORD:-password123}@postgres-rooms:5432/${POSTGRES_ROOM_DB:-rooms}
+      - DATABASE_URL=postgresql://${POSTGRES_ROOM_USER:-room}:${POSTGRES_ROOM_PASSWORD:-password123}@postgres-rooms:5432/${POSTGRES_ROOM_DB:-rooms}?sslmode=disable
       - POSTGRES_DB=${POSTGRES_ROOM_DB:-rooms}
       - POSTGRES_USER=${POSTGRES_ROOM_USER:-room}
       - POSTGRES_PASSWORD=${POSTGRES_ROOM_PASSWORD:-password123}
       - POSTGRES_HOST=postgres-rooms
       - POSTGRES_PORT=5432
+    volumes:
+      - ./service-room/src:/app/src
+      - ./service-room/package.json:/app/package.json
+      - ./service-room/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
     depends_on:
       postgres-rooms:
         condition: service_healthy
@@ -204,6 +229,7 @@ services:
   service-team:
     build:
       context: ./service-team
+      dockerfile: Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -211,14 +237,19 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=${NODE_ENV:-development}
       - PORT=7002
-      - DATABASE_URL=postgresql://${POSTGRES_TEAM_USER:-team}:${POSTGRES_TEAM_PASSWORD:-password123}@postgres-teams:5432/${POSTGRES_TEAM_DB:-teams}
+      - DATABASE_URL=postgresql://${POSTGRES_TEAM_USER:-team}:${POSTGRES_TEAM_PASSWORD:-password123}@postgres-teams:5432/${POSTGRES_TEAM_DB:-teams}?sslmode=disable
       - POSTGRES_DB=${POSTGRES_TEAM_DB:-teams}
       - POSTGRES_USER=${POSTGRES_TEAM_USER:-team}
       - POSTGRES_PASSWORD=${POSTGRES_TEAM_PASSWORD:-password123}
       - POSTGRES_HOST=postgres-teams
       - POSTGRES_PORT=5432
+    volumes:
+      - ./service-team/src:/app/src
+      - ./service-team/package.json:/app/package.json
+      - ./service-team/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
     depends_on:
       postgres-teams:
         condition: service_healthy

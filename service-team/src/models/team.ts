@@ -2,24 +2,38 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 import { TeamAttributes, TeamCreationAttributes } from '../types';
 
-interface TeamInstance extends Model<TeamAttributes, TeamCreationAttributes>, TeamAttributes { }
+class Team extends Model<TeamAttributes, TeamCreationAttributes> implements TeamAttributes {
+  public id!: string;
+  public name!: string;
+  public description?: string;
 
-const Team = sequelize.define<TeamInstance>('Team', {
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+Team.init(
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            len: [2, 50]
-        }
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
-}, {
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
     tableName: 'teams',
     timestamps: true,
-});
+  }
+);
 
 export default Team;

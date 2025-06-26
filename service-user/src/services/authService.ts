@@ -1,96 +1,57 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/user';
 import bcrypt from 'bcryptjs';
-import { UserCreationAttributes, LoginRequest, JwtPayload } from '../types';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import User from '../models/user';
+import { JwtPayload, UserCreationAttributes } from '../types';
 
-export class AuthService {
-    private static generateToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
-        return jwt.sign(
-            payload,
-            process.env.JWT_SECRET || '',
-            { expiresIn: '24h' }
-        );
-    }
+const JWT_SECRET: Secret = process.env.JWT_SECRET ?? 'supersecretkey';
+const JWT_EXPIRES_IN: SignOptions['expiresIn'] = (process.env.JWT_EXPIRES_IN ?? '1h') as SignOptions['expiresIn']
 
-    static async register(userData: UserCreationAttributes) {
-        const existingUser = await User.findOne({ where: { email: userData.email } });
-        if (existingUser) {
-            throw new Error('User already exists');
-        }
 
-        const user = await User.create(userData);
-        const token = this.generateToken({
-            id: user.id,
-            email: user.email,
-            role: user.role
-        });
+export const registerUser = async (userData: UserCreationAttributes) => {
+  const { username, email, passwordHash, role = 'user', isFirstConnection = true } = userData;
 
-        return {
-            token,
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-                isActive: user.isActive
-            }
-        };
-    }
+  const existingUser = await User.findOne({ where: { email } });
+  if (existingUser) {
+    throw new Error('User with this email already exists.');
+  }
 
-    static async login(loginData: LoginRequest) {
-        const user = await User.findOne({ where: { email: loginData.email } });
-        if (!user || !user.isActive) {
-            throw new Error('Invalid credentials');
-        }
+  const hashedPassword = await bcrypt.hash(passwordHash, 10);
 
-        const isValidPassword = await bcrypt.compare(loginData.password, user.password);
-        if (!isValidPassword) {
-            throw new Error('Invalid credentials');
-        }
+  const user = await User.create({
+    username,
+    email,
+    passwordHash: hashedPassword,
+    role,
+    isFirstConnection
+  });
 
-        const token = this.generateToken({
-            id: user.id,
-            email: user.email,
-            role: user.role
-        });
+  const userResponse: any = user.toJSON();
+  delete userResponse.passwordHash;
+  return userResponse;
+};
 
-        return {
-            token,
-            user: {
-                id: user.id,
-                email: user.email,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                team_id: user.team_id,
-                role: user.role,
-                isActive: user.isActive
-            }
-        };
-    }
+export const loginUser = async (email: string, passwordPlain: string) => {
+  const user = await User.findOne({ where: { email } });
+  if (!user) {
+    throw new Error('Invalid credentials.');
+  }
 
-    static async getUserProfile(userId: number) {
-        const user = await User.findByPk(userId, {
-            attributes: ['id', 'email', 'firstname', 'lastname', 'role', 'team_id', 'isActive', 'createdAt']
-        });
+  const isMatch = await bcrypt.compare(passwordPlain, user.passwordHash);
+  if (!isMatch) {
+    throw new Error('Invalid credentials.');
+  }
 
-        if (!user || !user.isActive) {
-            throw new Error('User not found');
-        }
+  const payload: JwtPayload = { userId: user.id, role: user.role };
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
-        return { user };
-    }
+  return { token, user: { id: user.id, username: user.username, email: user.email, role: user.role, isFirstConnection: user.isFirstConnection } };
 
-    static async changePassword(userId: number, currentPassword: string, newPassword: string) {
-        const user = await User.findByPk(userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
+};
 
-        const isValidPassword = await bcrypt.compare(currentPassword, user.password);
-        if (!isValidPassword) {
-            throw new Error('Current password invalid');
-        }
-
-        await user.update({ password: newPassword });
-        return { message: 'Password updated' };
-    }
-}
+export const markUserAsConnected = async (userId: string) => {
+  const user = await User.findByPk(userId);
+  if (user && user.isFirstConnection) {
+    user.isFirstConnection = false;
+    await user.save();
+  }
+};

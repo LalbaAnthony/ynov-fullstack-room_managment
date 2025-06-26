@@ -1,48 +1,27 @@
 {
   "name": "api-gateway",
   "version": "1.0.0",
-  "description": "",
+  "main": "index.js",
   "scripts": {
-    "build": "rimraf dist && npx tsc",
-    "prestart": "npm run build",
     "start": "node dist/index.js",
-    "dev": "npx nodemon",
-    "preserve": "npm run build",
-    "serve": "concurrently \"npx tsc -w\" \"npx nodemon dist/index.js\" ",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rimraf dist",
-    "prebuild": "npm run clean",
-    "docker:build": "docker build -t service-user .",
-    "docker:run": "docker run -p 7000:7000 service-user"
+    "build": "tsc",
+    "dev": "nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Anthony Lalba",
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "concurrently": "^9.1.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "express-rate-limit": "^7.5.0",
-    "helmet": "^6.1.5",
-    "http-proxy-middleware": "^3.0.5",
-    "morgan": "^1.10.0",
-    "nodemon": "^3.1.10",
-    "rimraf": "^6.0.1",
-    "ts-node": "^10.9.2"
+    "http-proxy-middleware": "^3.0.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.29.0",
-    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/morgan": "^1.9.10",
-    "eslint": "^9.29.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.0",
-    "globals": "^16.2.0",
-    "prettier": "^3.5.3",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.34.1"
+    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/node": "^24.0.4",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   }
 }

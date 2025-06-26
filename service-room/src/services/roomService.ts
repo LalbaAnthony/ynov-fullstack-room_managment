@@ -1,79 +1,35 @@
 import Room from '../models/room';
-import { UpdateRoomRequest } from '../types';
+import { RoomAttributes, RoomCreationAttributes } from '../types';
 
-export class RoomService {
-    static async getRooms(page: number = 1, limit: number = 10) {
-        const offset = (page - 1) * limit;
+export const createRoom = async (roomData: RoomCreationAttributes) => {
+  const room = await Room.create(roomData);
+  return room;
+};
 
-        const { count, rows } = await Room.findAndCountAll({
-            limit,
-            offset,
-            order: [['createdAt', 'DESC']]
-        });
+export const getAllRooms = async () => {
+  const rooms = await Room.findAll();
+  return rooms;
+};
 
-        return {
-            rooms: rows,
-            pagination: {
-                total: count,
-                page,
-                pages: Math.ceil(count / limit)
-            }
-        };
-    }
+export const getRoomById = async (id: string) => {
+  const room = await Room.findByPk(id);
+  return room;
+};
 
-    static async createRoom(roomData: { name: string }) {
-        if (!roomData.name) {
-            throw new Error('Room name is required');
-        }
+export const updateRoom = async (id: string, roomData: Partial<RoomAttributes>) => {
+  const room = await Room.findByPk(id);
+  if (!room) {
+    throw new Error('Room not found.');
+  }
+  await room.update(roomData);
+  return room;
+};
 
-        const room = await Room.create(roomData);
-
-        return {
-            room: {
-                id: room.id,
-                name: room.name,
-            }
-        };
-    }
-
-    static async getRoom(roomId: number) {
-        const room = await Room.findByPk(roomId);
-
-        if (!room) {
-            throw new Error('Room not found');
-        }
-
-        return {
-            room: {
-                id: room.id,
-                name: room.name,
-            }
-        };
-    }
-
-    static async updateRoom(roomId: number, updateData: UpdateRoomRequest) {
-        const room = await Room.findByPk(roomId);
-        if (!room) {
-            throw new Error('Room not found');
-        }
-
-        await room.update(updateData);
-
-        return {
-            room: {
-                id: room.id,
-                name: room.name,
-            }
-        };
-    }
-
-    static async deleteRoom(roomId: number) {
-        const deleted = await Room.destroy({ where: { id: roomId } });
-
-        if (!deleted) {
-            throw new Error('Room not found');
-        }
-
-        return { message: 'Room deleted' };
-    }
-}
+export const deleteRoom = async (id: string) => {
+  const room = await Room.findByPk(id);
+  if (!room) {
+    throw new Error('Room not found.');
+  }
+  await room.destroy();
+  return { message: 'Room deleted successfully.' };
+};

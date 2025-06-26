@@ -1,13 +1,11 @@
+import { Optional } from 'sequelize';
+
 export interface TeamAttributes {
-    id: number;
-    name: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+  id: string;
+  name: string;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export interface TeamCreationAttributes {
-    name: string;
-}
-
-export interface UpdateTeamRequest {
-}
+export interface TeamCreationAttributes extends Optional<TeamAttributes, 'id' | 'createdAt' | 'updatedAt' | 'description'> {}

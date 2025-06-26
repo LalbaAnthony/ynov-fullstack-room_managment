@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 nodejs
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+USER nodejs
+
+EXPOSE 7000
+
+ENV NODE_ENV=development
+
+CMD ["npm", "run", "dev"]

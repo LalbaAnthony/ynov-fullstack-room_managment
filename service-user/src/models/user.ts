@@ -1,73 +1,60 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import bcrypt from 'bcryptjs';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 import { UserAttributes, UserCreationAttributes } from '../types';
 
-interface UserInstance extends Model<UserAttributes, UserCreationAttributes>, UserAttributes { }
+class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+  public id!: string;
+  public username!: string;
+  public email!: string;
+  public passwordHash!: string;
+  public role!: 'user' | 'admin';
+  public isFirstConnection!: boolean;
 
-const User = sequelize.define<UserInstance>('User', {
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+User.init(
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+      allowNull: false,
     },
-    firstname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            len: [2, 50]
-        }
-    },
-    lastname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            len: [2, 50]
-        }
-    },
-    team_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        validate: {
-            isInt: true
-        }
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
     email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true
-        }
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            len: [6, 255]
-        }
+    passwordHash: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     role: {
-        type: DataTypes.ENUM('student', 'admin'),
-        defaultValue: 'student'
+      type: DataTypes.ENUM('user', 'admin'),
+      defaultValue: 'user',
+      allowNull: false,
     },
-    isActive: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true
-    }
-}, {
+    isFirstConnection: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
     tableName: 'users',
     timestamps: true,
-    hooks: {
-        beforeCreate: async (user: UserInstance) => {
-            user.password = await bcrypt.hash(user.password, 12);
-        },
-        beforeUpdate: async (user: UserInstance) => {
-            if (user.changed('password')) {
-                user.password = await bcrypt.hash(user.password, 12);
-            }
-        }
-    }
-});
+  }
+);
 
 export default User;

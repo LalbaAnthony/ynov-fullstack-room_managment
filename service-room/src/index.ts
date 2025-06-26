@@ -1,23 +1,37 @@
-import app from './app';
-import { sequelize } from './config/database';
+import express from 'express';
+import { connectToDatabase, sequelize } from './config/database';
+import roomRoutes from './routes/roomRoutes';
 
-const PORT = process.env.PORT;
+const app = express();
+const PORT = process.env.PORT || 7001;
 
-const startServer = async (): Promise<void> => {
-  try {
-    await sequelize.authenticate();
-    console.log('Database connection established');
+app.use(express.json());
 
-    await sequelize.sync({ force: false });
-    console.log('Database synchronized');
+app.use((req, res, next) => {
+  console.log(`[Service Room] ${req.method} ${req.path}`);
+  next();
+});
+
+app.use('/', roomRoutes);
+
+app.get('/health', async (_req, res) => {
+    try {
+        await sequelize.authenticate();
+        res.status(200).send('Service Room is healthy and DB is connected');
+    } catch (error) {
+        console.error('Healthcheck failed: DB connection error', error);
+        res.status(500).send('Service Room is unhealthy: DB connection failed');
+    }
+});
+
+async function startServer() {
+    await connectToDatabase();
+    await sequelize.sync({ alter: true });
+    console.log('Database synchronized.');
 
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+        console.log(`Service Room running on port ${PORT}`);
     });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
+}
 
 startServer();

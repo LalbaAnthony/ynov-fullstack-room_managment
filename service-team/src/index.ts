@@ -1,23 +1,37 @@
-import app from './app';
-import { sequelize } from './config/database';
+import express from "express";
+import { connectToDatabase, sequelize } from "./config/database";
+import teamRoutes from "./routes/teamRoutes";
 
-const PORT = process.env.PORT;
+const app = express();
+const PORT = process.env.PORT || 7002;
 
-const startServer = async (): Promise<void> => {
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(`[Service Team] ${req.method} ${req.path}`);
+  next();
+});
+
+app.use("/", teamRoutes);
+
+app.get("/health", async (_req, res) => {
   try {
     await sequelize.authenticate();
-    console.log('Database connection established');
-
-    await sequelize.sync({ force: false });
-    console.log('Database synchronized');
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    res.status(200).send("Service Team is healthy and DB is connected");
   } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+    console.error("Healthcheck failed: DB connection error", error);
+    res.status(500).send("Service Team is unhealthy: DB connection failed");
   }
-};
+});
+
+async function startServer() {
+  await connectToDatabase();
+  await sequelize.sync({ alter: true });
+  console.log("Database synchronized.");
+
+  app.listen(PORT, () => {
+    console.log(`Service Team running on port ${PORT}`);
+  });
+}
 
 startServer();

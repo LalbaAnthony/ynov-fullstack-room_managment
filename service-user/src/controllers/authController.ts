@@ -1,63 +1,33 @@
-import { Request, Response } from 'express';
-import { AuthService } from '../services/authService';
-import { AuthRequest, RegisterRequest, LoginRequest, ChangePasswordRequest } from '../types';
+import { NextFunction, Request, Response } from 'express';
+import * as authService from '../services/authService';
 
-export class AuthController {
-    static async register(req: Request, res: Response): Promise<void> {
-        try {
-            const { email, password, role, lastname, firstname, team_id }: RegisterRequest = req.body;
-
-            if (!email || !password || !firstname || !lastname) {
-                res.status(400).json({ error: 'Email, password, firstname, and lastname are required' });
-                return;
-            }
-
-            const result = await AuthService.register({ email, password, role, lastname, firstname, team_id });
-            res.status(201).json(result);
-        } catch (error: any) {
-            res.status(error.message === 'User already exists' ? 409 : 500)
-                .json({ error: error.message });
-        }
+export const register = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { username, email, password, role } = req.body;
+    if (!username || !email || !password) {
+      res.status(400).json({ message: 'Username, email and password are required.' });
+      return;
     }
+    const newUser = await authService.registerUser({ username, email, passwordHash: password, role });
+    res.status(201).json({ message: 'User registered successfully.', user: newUser });
+  } catch (error: any) {
+    console.error('Registration error:', error);
+    res.status(400).json({ message: error.message || 'Error registering user.' });
+  }
+};
 
-    static async login(req: Request, res: Response): Promise<void> {
-        try {
-            const { email, password }: LoginRequest = req.body;
-
-            if (!email || !password) {
-                res.status(400).json({ error: 'Email and password required' });
-                return;
-            }
-
-            const result = await AuthService.login({ email, password });
-            res.json(result);
-        } catch (error: any) {
-            res.status(401).json({ error: error.message });
-        }
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ message: 'Email and password are required.' });
+      return;
     }
-
-    static async getProfile(req: AuthRequest, res: Response): Promise<void> {
-        try {
-            const result = await AuthService.getUserProfile(req.user!.id);
-            res.json(result);
-        } catch (error: any) {
-            res.status(404).json({ error: error.message });
-        }
-    }
-
-    static async changePassword(req: AuthRequest, res: Response): Promise<void> {
-        try {
-            const { currentPassword, newPassword }: ChangePasswordRequest = req.body;
-
-            if (!currentPassword || !newPassword) {
-                res.status(400).json({ error: 'Current and new password required' });
-                return;
-            }
-
-            const result = await AuthService.changePassword(req.user!.id, currentPassword, newPassword);
-            res.json(result);
-        } catch (error: any) {
-            res.status(401).json({ error: error.message });
-        }
-    }
-}
+    const { token, user } = await authService.loginUser(email, password);
+    await authService.markUserAsConnected(user.id);
+    res.status(200).json({ message: 'Login successful.', token, user });
+  } catch (error: any) {
+    console.error('Login error:', error);
+    res.status(401).json({ message: error.message || 'Invalid credentials.' });
+  }
+};

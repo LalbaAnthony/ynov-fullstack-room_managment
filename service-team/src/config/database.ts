@@ -1,31 +1,47 @@
-import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
-import path from 'path';
+import { Sequelize } from 'sequelize';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config();
 
-const sequelizeProduction = new Sequelize(
-    process.env.POSTGRES_DB || '',
-    process.env.POSTGRES_USER || '',
-    process.env.POSTGRES_PASSWORD || '',
-    {
-        host: process.env.POSTGRES_HOST || '',
-        port: parseInt(process.env.POSTGRES_PORT || '5432'),
-        dialect: 'postgres',
-        logging: process.env.NODE_ENV === 'development' ? console.log : false,
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000
+const {
+    POSTGRES_DB,
+    POSTGRES_USER,
+    POSTGRES_PASSWORD,
+    POSTGRES_HOST,
+    POSTGRES_PORT,
+    DATABASE_URL,
+    NODE_ENV
+} = process.env;
+
+const connectionString = DATABASE_URL || `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
+
+const sequelize = new Sequelize(connectionString, {
+    dialect: 'postgres',
+    logging: NODE_ENV === 'development' ? console.log : false,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    },
+    dialectOptions: {
+        ssl: {
+            require: false,
+            rejectUnauthorized: false
         }
     }
-);
-
-const sequelizeDevelopment = new Sequelize({
-    dialect: 'sqlite',
-    storage: './database.sqlite',
-    logging: console.log,
 });
 
-export const sequelize = process.env.NODE_ENV === 'production' ? sequelizeProduction : sequelizeDevelopment;
+async function connectToDatabase() {
+    try {
+        await new Promise(resolve => setTimeout(resolve, 15000));
+
+        await sequelize.authenticate();
+        console.log(`Connection to PostgreSQL (${process.env.SERVICE_NAME || 'Service'}) has been established successfully.`);
+    } catch (error) {
+        console.error(`Unable to connect to the database (${process.env.SERVICE_NAME || 'Service'}):`, error);
+        process.exit(1);
+    }
+}
+
+export { connectToDatabase, sequelize };

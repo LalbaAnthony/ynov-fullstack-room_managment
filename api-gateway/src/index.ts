@@ -1,121 +1,55 @@
-import express from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
-
-// Charger les variables d'environnement
-dotenv.config();
+import express from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middleware de sécurité
-app.use(helmet());
+const SERVICE_USER_URL = process.env.SERVICE_USER_URL || "http://localhost:7000";
+const SERVICE_ROOM_URL = process.env.SERVICE_ROOM_URL || "http://localhost:7001";
+const SERVICE_TEAM_URL = process.env.SERVICE_TEAM_URL || "http://localhost:7002";
 
-// CORS configuration
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-}));
-
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limite chaque IP à 100 requêtes par windowMs
-    message: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.',
-});
-app.use(limiter);
-
-// Logging
-app.use(morgan('combined'));
-
-// Middleware pour parser JSON
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Route de santé
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        service: 'api-gateway',
-        version: '1.0.0'
-    });
+app.use((req: express.Request, _res: express.Response, next: express.NextFunction) => {
+  console.log(`[API Gateway] ${req.method} ${req.path}`);
+  next();
 });
 
-// Configuration des proxies vers les microservices
-const services = {
-    user: process.env.USER_SERVICE_URL || 'http://service-user:7000',
-    room: process.env.ROOM_SERVICE_URL || 'http://service-room:7001',
-    team: process.env.TEAM_SERVICE_URL || 'http://service-team:7002',
-};
-
-// Proxy vers service-user
-app.use('/api/users', createProxyMiddleware({
-    target: services.user,
-    changeOrigin: true,
+app.use("/api/users", createProxyMiddleware({
+  target: SERVICE_USER_URL,
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/users': '/',
+  },
 }));
 
-// Proxy vers service-room
-app.use('/api/rooms', createProxyMiddleware({
-    target: services.room,
-    changeOrigin: true,
+app.use("/api/rooms", createProxyMiddleware({
+  target: SERVICE_ROOM_URL,
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/rooms': '/',
+  },
 }));
 
-// Proxy vers service-team
-app.use('/api/teams', createProxyMiddleware({
-    target: services.team,
-    changeOrigin: true,
+app.use("/api/teams", createProxyMiddleware({
+  target: SERVICE_TEAM_URL,
+  changeOrigin: true,
+  pathRewrite: {
+    '^/api/teams': '/',
+  },
 }));
 
-// Route par défaut
-app.get('/', (req, res) => {
-    res.json({
-        message: 'API Gateway - Microservices Architecture',
-        version: '1.0.0',
-        services: {
-            user: `${services.user}`,
-            room: `${services.room}`,
-            team: `${services.team}`,
-        },
-        endpoints: {
-            health: '/health',
-            users: '/api/users',
-            rooms: '/api/rooms',
-            teams: '/api/teams',
-        },
-    });
+app.get("/", (_req, res) => {
+  res.send("API Gateway is running!");
 });
 
-// Middleware de gestion des erreurs
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error('Error:', err);
-    res.status(500).json({
-        error: 'Erreur interne du serveur',
-        message: process.env.NODE_ENV === 'development' ? err.message : 'Une erreur est survenue',
-    });
+app.get("/health", (_req, res) => {
+  res.status(200).send("API Gateway is healthy");
 });
 
-// Démarrage du serveur
 app.listen(PORT, () => {
-    console.log(`API Gateway démarré sur http://localhost:${PORT}`);
-    console.log(`Environnement: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Services configurés:`);
-    console.log(`- User Service: ${services.user}`);
-    console.log(`- Room Service: ${services.room}`);
-    console.log(`- Team Service: ${services.team}`);
-});
-
-// Gestion propre de l'arrêt
-process.on('SIGTERM', () => {
-    console.log('🛑 Arrêt du serveur API Gateway...');
-    process.exit(0);
-});
-
-process.on('SIGINT', () => {
-    console.log('🛑 Arrêt du serveur API Gateway...');
-    process.exit(0);
+  console.log(`API Gateway started on port ${PORT}`);
+  console.log(`User Service URL: ${SERVICE_USER_URL}`);
+  console.log(`Room Service URL: ${SERVICE_ROOM_URL}`);
+  console.log(`Team Service URL: ${SERVICE_TEAM_URL}`);
 });

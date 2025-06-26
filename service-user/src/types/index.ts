@@ -1,58 +1,23 @@
-import { Request } from 'express';
 export interface UserAttributes {
-    id: number;
-    firstname: string;
-    lastname: string;
-    team_id?: number;
+    id: string;
+    username: string;
     email: string;
-    password: string;
-    role: 'student' | 'admin';
-    isActive: boolean;
+    passwordHash: string;
+    role: 'user' | 'admin';
+    isFirstConnection: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface UserCreationAttributes {
-    firstname: string;
-    lastname: string;
-    team_id?: number;
-    email: string;
-    password: string;
-    role?: 'student' | 'admin';
-}
+import { Optional } from 'sequelize';
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'role' | 'isFirstConnection'> { }
 
 export interface JwtPayload {
-    id: number;
-    email: string;
-    role: string;
-    iat?: number;
-    exp?: number;
+    userId: string;
+    role: 'user' | 'admin';
 }
 
+import { Request } from 'express';
 export interface AuthRequest extends Request {
     user?: JwtPayload;
-}
-
-export interface LoginRequest {
-    email: string;
-    password: string;
-}
-
-export interface RegisterRequest {
-    firstname: string;
-    lastname: string;
-    team_id?: number;
-    email: string;
-    password: string;
-    role?: 'student' | 'admin';
-}
-
-export interface ChangePasswordRequest {
-    currentPassword: string;
-    newPassword: string;
-}
-
-export interface UpdateUserRequest {
-    role?: 'student' | 'admin';
-    isActive?: boolean;
 }

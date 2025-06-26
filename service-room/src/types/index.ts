@@ -1,13 +1,13 @@
+import { Optional } from 'sequelize';
+
 export interface RoomAttributes {
-    id: number;
-    name: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+  id: string;
+  name: string;
+  capacity: number;
+  location: string;
+  isAvailable: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export interface RoomCreationAttributes {
-    name: string;
-}
-
-export interface UpdateRoomRequest {
-}
+export interface RoomCreationAttributes extends Optional<RoomAttributes, 'id' | 'createdAt' | 'updatedAt' | 'isAvailable'> { }
