@@ -1,0 +1,101 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Globale du Projet",
+    "version": "1.0.0",
+    "description": "Documentation centralisée pour tous les microservices, accessible via l'API Gateway."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000",
+      "description": "Serveur de développement"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Entrez le token JWT obtenu via la route de login."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication (User Service)",
+      "description": "Gestion de l'authentification et de l'enregistrement."
+    },
+    {
+      "name": "Users (User Service)",
+      "description": "Opérations sur les utilisateurs."
+    },
+    {
+      "name": "Rooms (Room Service)",
+      "description": "Gestion des salles."
+    },
+    {
+      "name": "Teams (Team Service)",
+      "description": "Gestion des équipes."
+    }
+  ],
+  "paths": {
+    "/api/users/auth/login": {
+      "post": {
+        "tags": ["Authentication (User Service)"],
+        "summary": "Connecte un utilisateur et retourne un token JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "token": { "type": "string" } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Identifiants invalides" }
+        }
+      }
+    },
+    "/api/users/": {
+      "get": {
+        "tags": ["Users (User Service)"],
+        "summary": "Récupère la liste de tous les utilisateurs",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Liste des utilisateurs." },
+          "401": { "description": "Token manquant ou invalide" }
+        }
+      }
+    },
+    "/api/rooms/": {
+      "get": {
+        "tags": ["Rooms (Room Service)"],
+        "summary": "Récupère la liste de toutes les salles",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Liste des salles." },
+          "401": { "description": "Token manquant ou invalide" }
+        }
+      }
+    }
+  }
+}
