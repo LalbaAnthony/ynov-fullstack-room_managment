@@ -21,20 +21,6 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware pour servir la documentation Swagger
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerJsdoc({
-  definition: {
-    openapi: '3.0.0',
-    info: { title: 'API Documentation', version: '1.0.0', description: 'Documentation de l\'API', },
-    servers: [
-      {
-        url: `http://localhost:${process.env.PORT}`,
-      },
-    ],
-  },
-  apis: ['./routes/*.ts'],
-})));
-
 // Routes
 app.use(routes);
 
