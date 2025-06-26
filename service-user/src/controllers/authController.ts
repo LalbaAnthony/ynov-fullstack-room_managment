@@ -5,9 +5,8 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
   try {
     const { username, email, password, role } = req.body;
     if (!username || !email || !password) {
-      // Retire le 'return' ici
       res.status(400).json({ message: 'Username, email and password are required.' });
-      return; // Ajoute un return simple pour sortir de la fonction
+      return;
     }
     const newUser = await authService.registerUser({ username, email, passwordHash: password, role });
     res.status(201).json({ message: 'User registered successfully.', user: newUser });
@@ -21,9 +20,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      // Retire le 'return' ici
       res.status(400).json({ message: 'Email and password are required.' });
-      return; // Ajoute un return simple pour sortir de la fonction
+      return;
     }
     const { token, user } = await authService.loginUser(email, password);
     await authService.markUserAsConnected(user.id);

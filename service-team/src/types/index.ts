@@ -1,10 +1,9 @@
-// service-team/src/types/index.ts
 import { Optional } from 'sequelize';
 
 export interface TeamAttributes {
   id: string;
   name: string;
-  description?: string; // Description optionnelle
+  description?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

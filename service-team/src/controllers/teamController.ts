@@ -1,4 +1,3 @@
-// service-team/src/controllers/teamController.ts
 import { NextFunction, Request, Response } from 'express';
 import * as teamService from '../services/teamService';
 

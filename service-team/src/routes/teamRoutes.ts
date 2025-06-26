@@ -1,4 +1,3 @@
-// service-team/src/routes/teamRoutes.ts
 import { Router } from 'express';
 import * as teamController from '../controllers/teamController';
 

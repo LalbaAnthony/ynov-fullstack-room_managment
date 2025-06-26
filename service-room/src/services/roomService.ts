@@ -1,5 +1,5 @@
-import Room from '../models/room'; // Importe le modèle Room
-import { RoomAttributes, RoomCreationAttributes } from '../types'; // <-- Importe les types d'ici
+import Room from '../models/room';
+import { RoomAttributes, RoomCreationAttributes } from '../types';
 
 export const createRoom = async (roomData: RoomCreationAttributes) => {
   const room = await Room.create(roomData);

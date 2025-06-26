@@ -1,4 +1,3 @@
-// service-room/src/controllers/roomController.ts
 import { NextFunction, Request, Response } from 'express';
 import * as roomService from '../services/roomService';
 

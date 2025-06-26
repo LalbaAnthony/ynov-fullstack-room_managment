@@ -1,4 +1,3 @@
-// service-room/src/models/room.ts
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 import { RoomAttributes, RoomCreationAttributes } from '../types';

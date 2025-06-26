@@ -14,8 +14,6 @@ const {
 } = process.env;
 
 const connectionString = DATABASE_URL || `postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
-console.log('######################################')
-console.log(`Using connection string: ${connectionString}`);
 
 const sequelize = new Sequelize(connectionString, {
     dialect: 'postgres',

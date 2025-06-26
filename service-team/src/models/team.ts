@@ -1,4 +1,3 @@
-// service-team/src/models/team.ts
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 import { TeamAttributes, TeamCreationAttributes } from '../types';
@@ -27,7 +26,7 @@ Team.init(
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: true, // Autorise les descriptions nulles
+      allowNull: true,
     },
   },
   {
