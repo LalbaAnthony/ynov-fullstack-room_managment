@@ -15,7 +15,7 @@ export const healthCheck = (req: Request, res: Response) => {
 export const register = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { firstName, lastName, email, password, role } = req.body;
@@ -54,7 +54,7 @@ export const register = async (
 export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const { email, password } = req.body;
 

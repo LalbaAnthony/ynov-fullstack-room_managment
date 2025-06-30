@@ -57,7 +57,7 @@ export function LoginForm({
       await new Promise((res) => setTimeout(res, 800)); // petite pause simulée
 
       const foundUser = mockUsers.find(
-        (u) => u.email === data.email && u.password === data.password
+        (u) => u.email === data.email && u.password === data.password,
       );
 
       if (!foundUser) {
@@ -73,7 +73,7 @@ export function LoginForm({
           isAdmin: foundUser.isAdmin,
           isFirstConnection: foundUser.isFirstConnection,
         },
-        foundUser.token
+        foundUser.token,
       );
 
       toast.success("Connexion réussie !");

@@ -1,4 +1,4 @@
-import { Optional } from 'sequelize';
+import { Optional } from "sequelize";
 
 export interface TeamAttributes {
   id: string;
@@ -8,4 +8,7 @@ export interface TeamAttributes {
   updatedAt?: Date;
 }
 
-export interface TeamCreationAttributes extends Optional<TeamAttributes, 'id' | 'createdAt' | 'updatedAt' | 'description'> {}
+export type TeamCreationAttributes = Optional<
+  TeamAttributes,
+  "id" | "createdAt" | "updatedAt" | "description"
+>;

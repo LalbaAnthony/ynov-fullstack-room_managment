@@ -1,4 +1,4 @@
-import { Optional } from 'sequelize';
+import { Optional } from "sequelize";
 
 export interface RoomAttributes {
   id: string;
@@ -10,4 +10,7 @@ export interface RoomAttributes {
   updatedAt?: Date;
 }
 
-export interface RoomCreationAttributes extends Optional<RoomAttributes, 'id' | 'createdAt' | 'updatedAt' | 'isAvailable'> {}
+export type RoomCreationAttributes = Optional<
+  RoomAttributes,
+  "id" | "createdAt" | "updatedAt" | "isAvailable"
+>;

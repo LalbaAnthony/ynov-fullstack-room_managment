@@ -12,17 +12,16 @@ export interface UserAttributes {
   updatedAt?: Date;
 }
 
-export interface UserCreationAttributes
-  extends Optional<
-    UserAttributes,
-    | "id"
-    | "role"
-    | "isFirstConnection"
-    | "createdAt"
-    | "updatedAt"
-    | "firstName"
-    | "lastName"
-  > {}
+export type UserCreationAttributes = Optional<
+  UserAttributes,
+  | "id"
+  | "role"
+  | "isFirstConnection"
+  | "createdAt"
+  | "updatedAt"
+  | "firstName"
+  | "lastName"
+>;
 
 export interface JwtPayload {
   userId: string;
@@ -30,6 +29,7 @@ export interface JwtPayload {
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: JwtPayload;

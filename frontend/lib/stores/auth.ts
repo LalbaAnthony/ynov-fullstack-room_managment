@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ user, token });
     document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
     document.cookie = `user=${encodeURIComponent(
-      JSON.stringify(user)
+      JSON.stringify(user),
     )}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
   },
 
@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
           isFirstConnection: false,
         };
         document.cookie = `user=${encodeURIComponent(
-          JSON.stringify(updatedUser)
+          JSON.stringify(updatedUser),
         )}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
         return { user: updatedUser };
       }

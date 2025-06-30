@@ -1,10 +1,11 @@
-import bcrypt from 'bcryptjs';
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import User from '../models/user';
-import { JwtPayload, UserAttributes, UserCreationAttributes } from '../types';
+import bcrypt from "bcryptjs";
+import jwt, { Secret, SignOptions } from "jsonwebtoken";
+import User from "../models/user";
+import { JwtPayload, UserAttributes, UserCreationAttributes } from "../types";
 
-const JWT_SECRET: Secret = process.env.JWT_SECRET ?? 'supersecretkey';
-const JWT_EXPIRES_IN: SignOptions['expiresIn'] = (process.env.JWT_EXPIRES_IN ?? '1h') as SignOptions['expiresIn'];
+const JWT_SECRET: Secret = process.env.JWT_SECRET ?? "supersecretkey";
+const JWT_EXPIRES_IN: SignOptions["expiresIn"] = (process.env.JWT_EXPIRES_IN ??
+  "1h") as SignOptions["expiresIn"];
 
 /**
  * Registers a new user.
@@ -14,12 +15,21 @@ const JWT_EXPIRES_IN: SignOptions['expiresIn'] = (process.env.JWT_EXPIRES_IN ?? 
  * @returns {Promise<Partial<UserAttributes>>} The newly created user's data, excluding the password hash.
  * @throws {Error} If a user with the given email already exists.
  */
-export const registerUser = async (userData: UserCreationAttributes): Promise<Partial<UserAttributes>> => {
-  const { firstName, lastName, email, passwordHash, role = 'student', isFirstConnection = true } = userData;
+export const registerUser = async (
+  userData: UserCreationAttributes,
+): Promise<Partial<UserAttributes>> => {
+  const {
+    firstName,
+    lastName,
+    email,
+    passwordHash,
+    role = "student",
+    isFirstConnection = true,
+  } = userData;
 
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
-    throw new Error('User with this email already exists.');
+    throw new Error("User with this email already exists.");
   }
 
   const hashedPassword = await bcrypt.hash(passwordHash, 10);
@@ -46,15 +56,18 @@ export const registerUser = async (userData: UserCreationAttributes): Promise<Pa
  * @returns {Promise<{ token: string; user: Partial<UserAttributes> }>} The JWT and user details (excluding password hash).
  * @throws {Error} If credentials are invalid.
  */
-export const loginUser = async (email: string, passwordPlain: string): Promise<{ token: string; user: Partial<UserAttributes> }> => {
+export const loginUser = async (
+  email: string,
+  passwordPlain: string,
+): Promise<{ token: string; user: Partial<UserAttributes> }> => {
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    throw new Error('Invalid credentials. User does not exist');
+    throw new Error("Invalid credentials. User does not exist");
   }
 
   const isMatch = await bcrypt.compare(passwordPlain, user.passwordHash);
   if (!isMatch) {
-    throw new Error('Invalid credentials. Not match');
+    throw new Error("Invalid credentials. Not match");
   }
 
   const payload: JwtPayload = { userId: user.id, role: user.role };

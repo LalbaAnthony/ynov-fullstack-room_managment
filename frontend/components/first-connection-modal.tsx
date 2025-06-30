@@ -1,12 +1,12 @@
-  "use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import toast from "react-hot-toast"
-import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,25 +14,31 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useAuthStore } from "@/lib/stores/auth"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuthStore } from "@/lib/stores/auth";
 
-const newPasswordSchema = z.object({
-  newPassword: z.string().min(6, { message: "Le mot de passe doit contenir au moins 6 caractères." }),
-  confirmNewPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmNewPassword, {
-  message: "Les mots de passe ne correspondent pas.",
-  path: ["confirmNewPassword"],
-});
+const newPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(6, {
+        message: "Le mot de passe doit contenir au moins 6 caractères.",
+      }),
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Les mots de passe ne correspondent pas.",
+    path: ["confirmNewPassword"],
+  });
 
 type NewPasswordFormData = z.infer<typeof newPasswordSchema>;
 
 interface FirstConnectionModalProps {
-  email: string
-  open: boolean
-  onClose: () => void
+  email: string;
+  open: boolean;
+  onClose: () => void;
 }
 
 export function FirstConnectionModal({
@@ -41,7 +47,9 @@ export function FirstConnectionModal({
   onClose,
 }: FirstConnectionModalProps) {
   const router = useRouter();
-  const setFirstConnectionFalse = useAuthStore((state) => state.setFirstConnectionFalse);
+  const setFirstConnectionFalse = useAuthStore(
+    (state) => state.setFirstConnectionFalse,
+  );
   const token = useAuthStore((state) => state.token);
 
   const form = useForm<NewPasswordFormData>({
@@ -60,7 +68,7 @@ export function FirstConnectionModal({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           email: email,
@@ -70,7 +78,9 @@ export function FirstConnectionModal({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Erreur lors de la mise à jour du mot de passe.");
+        throw new Error(
+          errorData.message || "Erreur lors de la mise à jour du mot de passe.",
+        );
       }
 
       toast.success("Mot de passe mis à jour avec succès !");
@@ -83,7 +93,6 @@ export function FirstConnectionModal({
       } else {
         router.push("/");
       }
-
     } catch (error: any) {
       toast.error(error.message || "Une erreur inattendue est survenue.");
     }
@@ -95,10 +104,14 @@ export function FirstConnectionModal({
         <DialogHeader>
           <DialogTitle>Définir votre nouveau mot de passe</DialogTitle>
           <DialogDescription>
-            C'est votre première connexion. Veuillez définir un nouveau mot de passe sécurisé.
+            C'est votre première connexion. Veuillez définir un nouveau mot de
+            passe sécurisé.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid gap-4 py-4"
+        >
           <div className="grid gap-2">
             <Label htmlFor="newPassword">Nouveau mot de passe</Label>
             <Input
@@ -113,7 +126,9 @@ export function FirstConnectionModal({
             )}
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="confirmNewPassword">Confirmer le mot de passe</Label>
+            <Label htmlFor="confirmNewPassword">
+              Confirmer le mot de passe
+            </Label>
             <Input
               id="confirmNewPassword"
               type="password"

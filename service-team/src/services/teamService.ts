@@ -1,5 +1,5 @@
-import Team from '../models/team';
-import { TeamAttributes, TeamCreationAttributes } from '../types';
+import Team from "../models/team";
+import { TeamAttributes, TeamCreationAttributes } from "../types";
 
 export const createTeam = async (teamData: TeamCreationAttributes) => {
   const team = await Team.create(teamData);
@@ -16,10 +16,13 @@ export const getTeamById = async (id: string) => {
   return team;
 };
 
-export const updateTeam = async (id: string, teamData: Partial<TeamAttributes>) => {
+export const updateTeam = async (
+  id: string,
+  teamData: Partial<TeamAttributes>,
+) => {
   const team = await Team.findByPk(id);
   if (!team) {
-    throw new Error('Team not found.');
+    throw new Error("Team not found.");
   }
   await team.update(teamData);
   return team;
@@ -28,8 +31,8 @@ export const updateTeam = async (id: string, teamData: Partial<TeamAttributes>) 
 export const deleteTeam = async (id: string) => {
   const team = await Team.findByPk(id);
   if (!team) {
-    throw new Error('Team not found.');
+    throw new Error("Team not found.");
   }
   await team.destroy();
-  return { message: 'Team deleted successfully.' };
+  return { message: "Team deleted successfully." };
 };

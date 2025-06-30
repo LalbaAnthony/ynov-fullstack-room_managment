@@ -3,7 +3,11 @@
 import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import Link from "next/link";
 
 export function SidebarFooterContent() {
@@ -24,8 +28,15 @@ export function SidebarFooterContent() {
               {userName}
             </span>
           </div>
-          <Button variant="ghost" size="icon" className="group-has-data-[collapsible=icon]/sidebar-wrapper:hidden" asChild>
-            <Link href="/logout"> {/* Remplacez par votre route de déconnexion */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="group-has-data-[collapsible=icon]/sidebar-wrapper:hidden"
+            asChild
+          >
+            <Link href="/logout">
+              {" "}
+              {/* Remplacez par votre route de déconnexion */}
               <LogOut className="h-5 w-5" />
             </Link>
           </Button>

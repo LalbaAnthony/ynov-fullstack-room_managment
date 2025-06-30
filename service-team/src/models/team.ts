@@ -1,8 +1,11 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../config/database';
-import { TeamAttributes, TeamCreationAttributes } from '../types';
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../config/database";
+import { TeamAttributes, TeamCreationAttributes } from "../types";
 
-class Team extends Model<TeamAttributes, TeamCreationAttributes> implements TeamAttributes {
+class Team
+  extends Model<TeamAttributes, TeamCreationAttributes>
+  implements TeamAttributes
+{
   public id!: string;
   public name!: string;
   public description?: string;
@@ -31,9 +34,9 @@ Team.init(
   },
   {
     sequelize,
-    tableName: 'teams',
+    tableName: "teams",
     timestamps: true,
-  }
+  },
 );
 
 export default Team;

@@ -1,14 +1,17 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../config/database';
-import { UserAttributes, UserCreationAttributes } from '../types';
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../config/database";
+import { UserAttributes, UserCreationAttributes } from "../types";
 
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
   public id!: string;
   public firstName!: string;
   public lastName!: string;
   public email!: string;
   public passwordHash!: string;
-  public role!: 'student' | 'admin';
+  public role!: "student" | "admin";
   public isFirstConnection!: boolean;
 
   public readonly createdAt!: Date;
@@ -46,8 +49,8 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('student', 'admin'),
-      defaultValue: 'student',
+      type: DataTypes.ENUM("student", "admin"),
+      defaultValue: "student",
       allowNull: false,
     },
     isFirstConnection: {
@@ -58,9 +61,9 @@ User.init(
   },
   {
     sequelize,
-    tableName: 'users',
+    tableName: "users",
     timestamps: true,
-  }
+  },
 );
 
 export default User;

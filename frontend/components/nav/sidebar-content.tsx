@@ -1,7 +1,13 @@
 "use client";
 
 import { Users, DoorOpen, UserRoundCog } from "lucide-react";
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import Link from "next/link";
 
 export function SidebarContentSections() {
@@ -44,7 +50,11 @@ export function SidebarContentSections() {
       </SidebarGroup>
 
       <div className="mt-auto p-4 flex justify-center group-has-data-[collapsible=icon]/sidebar-wrapper:hidden">
-        <img src="/logo-room-managment.png" alt="App Logo" className="h-30 w-auto" />
+        <img
+          src="/logo-room-managment.png"
+          alt="App Logo"
+          className="h-30 w-auto"
+        />
       </div>
     </>
   );

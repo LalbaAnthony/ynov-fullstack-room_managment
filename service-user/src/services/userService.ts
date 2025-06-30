@@ -1,6 +1,6 @@
-import bcrypt from 'bcryptjs';
-import User from '../models/user';
-import { UserAttributes, UserCreationAttributes } from '../types';
+import bcrypt from "bcryptjs";
+import User from "../models/user";
+import { UserAttributes, UserCreationAttributes } from "../types";
 
 /**
  * Retrieves all users from the database.
@@ -10,9 +10,9 @@ import { UserAttributes, UserCreationAttributes } from '../types';
  */
 export const getAllUsers = async (): Promise<Partial<UserAttributes>[]> => {
   const users = await User.findAll({
-    attributes: { exclude: ['passwordHash'] },
+    attributes: { exclude: ["passwordHash"] },
   });
-  return users.map(user => user.toJSON());
+  return users.map((user) => user.toJSON());
 };
 
 /**
@@ -22,13 +22,15 @@ export const getAllUsers = async (): Promise<Partial<UserAttributes>[]> => {
  * @returns {Promise<Partial<UserAttributes>>}
  * @throws {Error}
  */
-export const getUser = async (userId: string): Promise<Partial<UserAttributes>> => {
+export const getUser = async (
+  userId: string,
+): Promise<Partial<UserAttributes>> => {
   const user = await User.findByPk(userId, {
-    attributes: { exclude: ['passwordHash'] },
+    attributes: { exclude: ["passwordHash"] },
   });
 
   if (!user) {
-    throw new Error('User not found.');
+    throw new Error("User not found.");
   }
 
   return user;
@@ -42,10 +44,12 @@ export const getUser = async (userId: string): Promise<Partial<UserAttributes>> 
  * @returns {Promise<Partial<UserAttributes>>} A promise that resolves to the newly created user object (without password hash).
  * @throws {Error} If a user with the given email already exists.
  */
-export const createUser = async (userData: UserCreationAttributes): Promise<Partial<UserAttributes>> => {
+export const createUser = async (
+  userData: UserCreationAttributes,
+): Promise<Partial<UserAttributes>> => {
   const existingUser = await User.findOne({ where: { email: userData.email } });
   if (existingUser) {
-    throw new Error('User with this email already exists.');
+    throw new Error("User with this email already exists.");
   }
 
   const hashedPassword = await bcrypt.hash(userData.passwordHash, 10);
@@ -69,16 +73,21 @@ export const createUser = async (userData: UserCreationAttributes): Promise<Part
  * @returns {Promise<Partial<UserAttributes>>} A promise that resolves to the updated user object (without password hash).
  * @throws {Error} If the user is not found or if the email already exists for another user.
  */
-export const updateUser = async (userId: string, userData: Partial<UserAttributes>): Promise<Partial<UserAttributes>> => {
+export const updateUser = async (
+  userId: string,
+  userData: Partial<UserAttributes>,
+): Promise<Partial<UserAttributes>> => {
   const user = await User.findByPk(userId);
   if (!user) {
-    throw new Error('User not found.');
+    throw new Error("User not found.");
   }
 
   if (userData.email && userData.email !== user.email) {
-    const existingUser = await User.findOne({ where: { email: userData.email } });
+    const existingUser = await User.findOne({
+      where: { email: userData.email },
+    });
     if (existingUser && existingUser.id !== userId) {
-      throw new Error('Email already in use by another user.');
+      throw new Error("Email already in use by another user.");
     }
   }
 
@@ -106,6 +115,6 @@ export const deleteUser = async (userId: string): Promise<void> => {
   });
 
   if (result === 0) {
-    throw new Error('User not found.');
+    throw new Error("User not found.");
   }
 };

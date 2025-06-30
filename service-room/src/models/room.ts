@@ -1,8 +1,11 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../config/database';
-import { RoomAttributes, RoomCreationAttributes } from '../types';
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../config/database";
+import { RoomAttributes, RoomCreationAttributes } from "../types";
 
-class Room extends Model<RoomAttributes, RoomCreationAttributes> implements RoomAttributes {
+class Room
+  extends Model<RoomAttributes, RoomCreationAttributes>
+  implements RoomAttributes
+{
   public id!: string;
   public name!: string;
   public capacity!: number;
@@ -42,9 +45,9 @@ Room.init(
   },
   {
     sequelize,
-    tableName: 'rooms',
+    tableName: "rooms",
     timestamps: true,
-  }
+  },
 );
 
 export default Room;

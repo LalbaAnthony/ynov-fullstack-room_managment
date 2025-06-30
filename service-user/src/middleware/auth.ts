@@ -1,8 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
-import jwt, { JsonWebTokenError, Secret, TokenExpiredError } from 'jsonwebtoken';
-import { JwtPayload } from '../types';
+import { NextFunction, Request, Response } from "express";
+import jwt, {
+  JsonWebTokenError,
+  Secret,
+  TokenExpiredError,
+} from "jsonwebtoken";
+import { JwtPayload } from "../types";
 
-const JWT_SECRET: Secret = process.env.JWT_SECRET ?? 'supersecretkey';
+const JWT_SECRET: Secret = process.env.JWT_SECRET ?? "supersecretkey";
 
 /**
  * Middleware to authenticate requests using JWT.
@@ -13,13 +17,17 @@ const JWT_SECRET: Secret = process.env.JWT_SECRET ?? 'supersecretkey';
  * @param {NextFunction} next - The Express next middleware function.
  */
 // Pour être plus explicite, on peut ajouter le type de retour : void
-export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+export const authenticateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) {
     // On enlève le "return" ici
-    res.status(401).json({ message: 'Authentication token required.' });
+    res.status(401).json({ message: "Authentication token required." });
     return; // On peut mettre un return vide pour stopper l'exécution de la fonction
   }
 
@@ -27,16 +35,16 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     if (err) {
       if (err instanceof TokenExpiredError) {
         // On enlève le "return" ici
-        res.status(403).json({ message: 'Token expired.' });
+        res.status(403).json({ message: "Token expired." });
         return;
       }
       if (err instanceof JsonWebTokenError) {
         // On enlève le "return" ici
-        res.status(403).json({ message: 'Invalid token.' });
+        res.status(403).json({ message: "Invalid token." });
         return;
       }
       // On enlève le "return" ici
-      res.status(403).json({ message: 'Forbidden.' });
+      res.status(403).json({ message: "Forbidden." });
       return;
     }
 
@@ -52,15 +60,17 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
  * @param {('student' | 'admin')[]} allowedRoles - An array of roles that are allowed to access the route.
  * @returns {Function} An Express middleware function.
  */
-export const authorizeRoles = (allowedRoles: ('student' | 'admin')[]) => {
+export const authorizeRoles = (allowedRoles: ("student" | "admin")[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user || !req.user.role) {
-      res.status(403).json({ message: 'Access denied. User role not found.' });
+      res.status(403).json({ message: "Access denied. User role not found." });
       return;
     }
 
     if (!allowedRoles.includes(req.user.role)) {
-      res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+      res
+        .status(403)
+        .json({ message: "Access denied. Insufficient permissions." });
       return;
     }
 

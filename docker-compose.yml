@@ -74,7 +74,11 @@ services:
       - pgdata-users:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_USER:-user} -d ${POSTGRES_USER_DB:-users}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER_USER:-user} -d ${POSTGRES_USER_DB:-users}",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -140,7 +144,11 @@ services:
       - pgdata-rooms:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ROOM_USER:-room} -d ${POSTGRES_ROOM_DB:-rooms}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_ROOM_USER:-room} -d ${POSTGRES_ROOM_DB:-rooms}",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -206,7 +214,11 @@ services:
       - pgdata-teams:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_TEAM_USER:-team} -d ${POSTGRES_TEAM_DB:-teams}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_TEAM_USER:-team} -d ${POSTGRES_TEAM_DB:-teams}",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3

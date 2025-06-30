@@ -1,5 +1,5 @@
-import Room from '../models/room';
-import { RoomAttributes, RoomCreationAttributes } from '../types';
+import Room from "../models/room";
+import { RoomAttributes, RoomCreationAttributes } from "../types";
 
 export const createRoom = async (roomData: RoomCreationAttributes) => {
   const room = await Room.create(roomData);
@@ -16,10 +16,13 @@ export const getRoomById = async (id: string) => {
   return room;
 };
 
-export const updateRoom = async (id: string, roomData: Partial<RoomAttributes>) => {
+export const updateRoom = async (
+  id: string,
+  roomData: Partial<RoomAttributes>,
+) => {
   const room = await Room.findByPk(id);
   if (!room) {
-    throw new Error('Room not found.');
+    throw new Error("Room not found.");
   }
   await room.update(roomData);
   return room;
@@ -28,8 +31,8 @@ export const updateRoom = async (id: string, roomData: Partial<RoomAttributes>) 
 export const deleteRoom = async (id: string) => {
   const room = await Room.findByPk(id);
   if (!room) {
-    throw new Error('Room not found.');
+    throw new Error("Room not found.");
   }
   await room.destroy();
-  return { message: 'Room deleted successfully.' };
+  return { message: "Room deleted successfully." };
 };

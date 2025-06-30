@@ -26,4 +26,4 @@ export const mockUsers = [
     isAdmin: false,
     isFirstConnection: true,
   },
-]
+];

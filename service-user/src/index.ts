@@ -35,36 +35,41 @@ app.get("/health", async (_req, res) => {
 async function seedDatabase() {
   console.log("[SEED] Checking for initial users...");
 
-  const usersToSeed: (Pick<UserCreationAttributes, 'firstName' | 'lastName' | 'email' | 'role' | 'isFirstConnection'> & { password: string })[] = [
+  const usersToSeed: (Pick<
+    UserCreationAttributes,
+    "firstName" | "lastName" | "email" | "role" | "isFirstConnection"
+  > & { password: string })[] = [
     {
-      firstName: 'admin',
-      lastName: 'admin',
-      email: 'admin@admin.com',
-      password: 'admin123',
-      role: 'admin',
-      isFirstConnection: false
+      firstName: "admin",
+      lastName: "admin",
+      email: "admin@admin.com",
+      password: "admin123",
+      role: "admin",
+      isFirstConnection: false,
     },
     {
-      firstName: 'yoan',
-      lastName: 'martins',
-      email: 'yoan@yoan.com',
-      password: 'azertyuiop',
-      role: 'student',
-      isFirstConnection: false
+      firstName: "yoan",
+      lastName: "martins",
+      email: "yoan@yoan.com",
+      password: "azertyuiop",
+      role: "student",
+      isFirstConnection: false,
     },
     {
-      firstName: 'anthony',
-      lastName: 'lalba',
-      email: 'anthony@anthony.com',
-      password: 'azertyuiop',
-      role: 'student',
-      isFirstConnection: false
-    }
+      firstName: "anthony",
+      lastName: "lalba",
+      email: "anthony@anthony.com",
+      password: "azertyuiop",
+      role: "student",
+      isFirstConnection: false,
+    },
   ];
 
   for (const userData of usersToSeed) {
     try {
-      const existingUser = await User.findOne({ where: { email: userData.email } });
+      const existingUser = await User.findOne({
+        where: { email: userData.email },
+      });
 
       if (!existingUser) {
         const passwordHash = await bcrypt.hash(userData.password, 10);
