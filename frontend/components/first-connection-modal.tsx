@@ -21,11 +21,9 @@ import { useAuthStore } from "@/lib/stores/auth";
 
 const newPasswordSchema = z
   .object({
-    newPassword: z
-      .string()
-      .min(6, {
-        message: "Le mot de passe doit contenir au moins 6 caractères.",
-      }),
+    newPassword: z.string().min(6, {
+      message: "Le mot de passe doit contenir au moins 6 caractères.",
+    }),
     confirmNewPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
