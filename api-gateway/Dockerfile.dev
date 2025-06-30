@@ -4,15 +4,17 @@ RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 nodejs
 
 WORKDIR /app
 
-COPY . .
+COPY package.json package-lock.json* ./
 
+RUN chown -R nodejs:nodejs .
+USER nodejs
 RUN npm ci
 
+USER root
+COPY . .
+RUN chown -R nodejs:nodejs .
 USER nodejs
 
 EXPOSE 4000
 
-ENV NODE_ENV=development
-ENV PORT=4000
-
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev", "--workspace=api-gateway"]

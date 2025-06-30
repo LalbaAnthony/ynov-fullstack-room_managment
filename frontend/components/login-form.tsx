@@ -8,20 +8,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 import { cn } from "@/lib/utils";
 
+import { loginUser, LoginCredentials } from "@/lib/services/authService";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FirstConnectionModal } from "@/components/first-connection-modal";
 import { useAuthStore } from "@/lib/stores/auth";
-import { mockUsers } from "@/lib/mockUsers";
 
-const schema = z.object({
+const formSchema = z.object({
   email: z.string().email({ message: "Email invalide." }),
   password: z.string().min(1, { message: "Le mot de passe est requis." }),
 });
 
-type LoginFormData = z.infer<typeof schema>;
+type LoginFormData = LoginCredentials;
 
 export function LoginForm({
   className,
@@ -32,57 +33,34 @@ export function LoginForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({ resolver: zodResolver(schema) });
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({ resolver: zodResolver(formSchema) });
 
   const [showModal, setShowModal] = useState(false);
   const [emailForModal, setEmailForModal] = useState("");
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // **Simule l'appel API NestJS ici**
-      // En production, tu remplacerais ceci par un fetch à ton backend réel.
-      // Par exemple :
-      // const response = await fetch("YOUR_NESTJS_API_URL/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(data),
-      // });
-      // if (!response.ok) { ... throw new Error() ... }
-      // const apiData = await response.json();
-      // const foundUser = apiData.user;
-      // const token = apiData.accessToken;
-
-      // --- SIMULATION AVEC MOCKUSERS ---
-      await new Promise((res) => setTimeout(res, 800)); // petite pause simulée
-
-      const foundUser = mockUsers.find(
-        (u) => u.email === data.email && u.password === data.password,
-      );
-
-      if (!foundUser) {
-        throw new Error("Identifiants invalides");
-      }
-      // --- FIN SIMULATION ---
+      const { user, token } = await loginUser(data);
 
       login(
         {
-          email: foundUser.email,
-          firstName: foundUser.firstName,
-          lastName: foundUser.lastName,
-          isAdmin: foundUser.isAdmin,
-          isFirstConnection: foundUser.isFirstConnection,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isAdmin: user.role === "admin",
+          isFirstConnection: user.isFirstConnection,
         },
-        foundUser.token,
+        token
       );
 
       toast.success("Connexion réussie !");
-      setEmailForModal(foundUser.email);
+      setEmailForModal(user.email);
 
-      if (foundUser.isFirstConnection) {
+      if (user.isFirstConnection) {
         setShowModal(true);
       } else {
-        router.push(foundUser.isAdmin ? "/admin" : "/");
+        router.push(user.role === "admin" ? "/admin" : "/");
       }
     } catch (err: any) {
       toast.error(err.message || "Erreur de connexion");
@@ -102,7 +80,12 @@ export function LoginForm({
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" {...register("email")} />
+                  <Input
+                    id="email"
+                    type="email"
+                    {...register("email")}
+                    disabled={isSubmitting}
+                  />
                   {errors.email && (
                     <p className="text-red-500 text-sm">
                       {errors.email.message}
@@ -115,6 +98,7 @@ export function LoginForm({
                     id="password"
                     type="password"
                     {...register("password")}
+                    disabled={isSubmitting}
                   />
                   {errors.password && (
                     <p className="text-red-500 text-sm">
@@ -122,8 +106,12 @@ export function LoginForm({
                     </p>
                   )}
                 </div>
-                <Button type="submit" className="w-full">
-                  Login
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Connexion en cours..." : "Login"}
                 </Button>
               </div>
             </form>

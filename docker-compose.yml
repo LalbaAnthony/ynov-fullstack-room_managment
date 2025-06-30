@@ -4,8 +4,10 @@ services:
   # ===================================================
   api-gateway:
     build:
-      context: ./api-gateway
-      dockerfile: Dockerfile.dev
+      # MODIFIÉ: Le contexte est maintenant la racine du projet
+      context: .
+      # MODIFIÉ: On spécifie le chemin vers le Dockerfile du service
+      dockerfile: ./api-gateway/Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -23,23 +25,19 @@ services:
       - service-room
       - service-team
     volumes:
-      - ./api-gateway/src:/app/src
-      - ./api-gateway/package.json:/app/package.json
-      - ./api-gateway/tsconfig.json:/app/tsconfig.json
+      # MODIFIÉ: Montage du code source pour le live-reload (notez le nouveau chemin dans le container)
+      - ./api-gateway/src:/app/api-gateway/src
+      # CONSERVÉ: Empêche le node_modules local de masquer celui du container
       - /app/node_modules
     restart: unless-stopped
 
   # ===================================================
-  # FRONTEND
+  # FRONTEND (Exemple si tu le réactives)
   # ===================================================
-  # ! DISABLED FOR NOW CUZ HOW DA HELL DOES THIS SHIT TAKE SOOO LONG
-  # Si tu veux le réactiver, suis le même principe :
-  # - Créer un Dockerfile.dev pour le frontend
-  # - Ajouter des volumes pour le live reload
   # frontend:
   #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile.dev
+  #     context: .
+  #     dockerfile: ./frontend/Dockerfile.dev
   #   networks:
   #     - microservices-network
   #   ports:
@@ -49,9 +47,13 @@ services:
   #   environment:
   #     - NODE_ENV=${NODE_ENV:-development}
   #     - PORT=3000
-  #     - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:4000}
+  #     - NEXT_PUBLIC_API_URL=http://localhost:4000/api
   #   volumes:
-  #     - ./frontend:/app
+  #     # Le chemin du code source pour le live reload
+  #     - ./frontend:/app/frontend
+  #     # Le dossier .next est généré dans le container, on le garde
+  #     - /app/frontend/.next
+  #     # On protège le node_modules du container
   #     - /app/node_modules
   #   depends_on:
   #     - api-gateway
@@ -100,8 +102,10 @@ services:
 
   service-user:
     build:
-      context: ./service-user
-      dockerfile: Dockerfile.dev
+      # MODIFIÉ: Contexte à la racine
+      context: .
+      # MODIFIÉ: Chemin vers le Dockerfile
+      dockerfile: ./service-user/Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -118,9 +122,9 @@ services:
       - POSTGRES_HOST=postgres-users
       - POSTGRES_PORT=5432
     volumes:
-      - ./service-user/src:/app/src
-      - ./service-user/package.json:/app/package.json
-      - ./service-user/tsconfig.json:/app/tsconfig.json
+      # MODIFIÉ: Montage du code source du service
+      - ./service-user/src:/app/service-user/src
+      # CONSERVÉ: Protège les dépendances du container
       - /app/node_modules
     depends_on:
       postgres-users:
@@ -170,8 +174,10 @@ services:
 
   service-room:
     build:
-      context: ./service-room
-      dockerfile: Dockerfile.dev
+      # MODIFIÉ: Contexte à la racine
+      context: .
+      # MODIFIÉ: Chemin vers le Dockerfile
+      dockerfile: ./service-room/Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -188,9 +194,9 @@ services:
       - POSTGRES_HOST=postgres-rooms
       - POSTGRES_PORT=5432
     volumes:
-      - ./service-room/src:/app/src
-      - ./service-room/package.json:/app/package.json
-      - ./service-room/tsconfig.json:/app/tsconfig.json
+      # MODIFIÉ: Montage du code source du service
+      - ./service-room/src:/app/service-room/src
+      # CONSERVÉ: Protège les dépendances du container
       - /app/node_modules
     depends_on:
       postgres-rooms:
@@ -240,8 +246,10 @@ services:
 
   service-team:
     build:
-      context: ./service-team
-      dockerfile: Dockerfile.dev
+      # MODIFIÉ: Contexte à la racine
+      context: .
+      # MODIFIÉ: Chemin vers le Dockerfile
+      dockerfile: ./service-team/Dockerfile.dev
     networks:
       - microservices-network
     ports:
@@ -258,9 +266,7 @@ services:
       - POSTGRES_HOST=postgres-teams
       - POSTGRES_PORT=5432
     volumes:
-      - ./service-team/src:/app/src
-      - ./service-team/package.json:/app/package.json
-      - ./service-team/tsconfig.json:/app/tsconfig.json
+      - ./service-team/src:/app/service-team/src
       - /app/node_modules
     depends_on:
       postgres-teams:
