@@ -1,6 +1,5 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
-// CORRECTION: On importe les types natifs de Node.js pour les callbacks du proxy
 import { ClientRequest, IncomingMessage, ServerResponse } from "http";
 import { createProxyMiddleware, Options } from "http-proxy-middleware";
 import { Socket } from "net";
@@ -9,8 +8,6 @@ import swaggerDocument from "./swagger.json";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
-// --- Middlewares ---
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(
@@ -27,7 +24,6 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// --- Configuration des services ---
 const SERVICE_USER_URL =
   process.env.SERVICE_USER_URL || "http://service-user:7000";
 const SERVICE_ROOM_URL =
@@ -35,15 +31,11 @@ const SERVICE_ROOM_URL =
 const SERVICE_TEAM_URL =
   process.env.SERVICE_TEAM_URL || "http://service-team:7002";
 
-// --- Configuration du Proxy ---
-
-// CORRECTION: La signature de la fonction utilise maintenant les types natifs de Node (IncomingMessage, ServerResponse)
 const onProxyReq = (
   proxyReq: ClientRequest,
   req: IncomingMessage,
   res: ServerResponse
 ) => {
-  // On caste la requête en type Express pour accéder à `body` en toute sécurité
   const expressReq = req as Request;
   console.log(
     `[PROXY] -> Forwarding request: ${expressReq.method} ${expressReq.url} to ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`
@@ -57,7 +49,6 @@ const onProxyReq = (
   }
 };
 
-// CORRECTION: La signature ici utilise aussi IncomingMessage
 const onError = (
   err: Error,
   req: IncomingMessage,
@@ -80,8 +71,6 @@ const proxyOptions = (target: string): Options => ({
     error: onError,
   },
 });
-
-// --- Routes ---
 
 app.use("/documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
